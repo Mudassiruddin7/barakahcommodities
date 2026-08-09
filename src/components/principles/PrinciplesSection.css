@@ -1,0 +1,91 @@
+/* ============================================
+   Principles Section Styles
+   ============================================ */
+
+.principles {
+  background-color: var(--color-emerald);
+  color: var(--color-ivory);
+}
+
+.principles__cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-10);
+}
+
+.principles__card {
+  background-color: rgba(3, 31, 23, 0.4);
+  border-top: 2px solid rgba(201, 163, 78, 0.4);
+  padding: var(--space-8) var(--space-6);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  transition: background-color 400ms ease, transform 400ms ease;
+}
+
+.principles__card:hover {
+  background-color: rgba(3, 31, 23, 0.6);
+  transform: translateY(-3px);
+}
+
+.principles__card-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--color-gold);
+  margin-bottom: var(--space-5);
+  opacity: 0.7;
+}
+
+.principles__card-title-ar {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-gold);
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-1);
+}
+
+.principles__card-title-en {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(247, 243, 232, 0.45);
+  margin-bottom: var(--space-4);
+}
+
+.principles__card-desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: rgba(247, 243, 232, 0.65);
+  line-height: var(--leading-relaxed);
+}
+
+.principles__disclaimer {
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  color: rgba(247, 243, 232, 0.3);
+  line-height: var(--leading-relaxed);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .principles__cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .principles__cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .principles__cards {
+    grid-template-columns: 1fr;
+  }
+}

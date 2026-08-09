@@ -1,0 +1,214 @@
+/* ============================================
+   Hero Section Styles
+   ============================================ */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(160deg, #063B2A 0%, #031F17 60%, #021510 100%);
+  position: relative;
+  overflow: hidden;
+  padding-top: var(--nav-height);
+}
+
+/* Subtle geometric pattern overlay */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(201, 163, 78, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(201, 163, 78, 0.02) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+  align-items: center;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-16) var(--space-6);
+}
+
+/* Text column */
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: var(--space-6);
+}
+
+.hero__title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5vw, 3.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--color-ivory);
+  margin-bottom: var(--space-8);
+}
+
+.hero__title-line {
+  display: block;
+}
+
+.hero__description {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(247, 243, 232, 0.65);
+  max-width: 480px;
+  margin-bottom: var(--space-8);
+}
+
+.hero__divider {
+  width: 60px;
+  height: 1px;
+  background-color: var(--color-gold);
+  margin-bottom: var(--space-8);
+}
+
+.hero__buttons {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.hero__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-8);
+  background-color: #0A5A3F;
+  color: var(--color-ivory);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(201, 163, 78, 0.2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.hero__btn-primary:hover {
+  background-color: #0D6E4C;
+  box-shadow: 0 4px 20px rgba(6, 59, 42, 0.4);
+  border-color: rgba(201, 163, 78, 0.4);
+}
+
+.hero__btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-8);
+  background-color: transparent;
+  color: var(--color-gold);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.hero__btn-secondary:hover {
+  background-color: var(--color-gold);
+  color: var(--color-forest);
+}
+
+.hero__trust {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(201, 163, 78, 0.5);
+}
+
+/* 3D Scene column */
+.hero__scene {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  min-height: 400px;
+}
+
+.hero__scene-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  background: radial-gradient(ellipse at center, rgba(201, 163, 78, 0.08) 0%, transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero__scene-fallback-text {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  color: rgba(201, 163, 78, 0.2);
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-8);
+  }
+
+  .hero__description {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero__divider {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero__buttons {
+    justify-content: center;
+  }
+
+  .hero__scene {
+    height: 350px;
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__scene {
+    height: 280px;
+    min-height: 220px;
+  }
+
+  .hero__buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero__btn-primary,
+  .hero__btn-secondary {
+    justify-content: center;
+  }
+}

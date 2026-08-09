@@ -1,0 +1,160 @@
+/* ============================================
+   Footer Styles
+   ============================================ */
+
+.footer {
+  background-color: var(--color-forest);
+  color: var(--color-ivory);
+  padding: var(--space-20) 0 var(--space-8);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: var(--space-16);
+  margin-bottom: var(--space-16);
+}
+
+/* Column 1: Brand */
+.footer__brand-logo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-6);
+}
+
+.footer__brand-main {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0.15em;
+  color: var(--color-ivory);
+}
+
+.footer__brand-sub {
+  font-family: var(--font-sans);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.footer__tagline {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-style: italic;
+  color: rgba(247, 243, 232, 0.6);
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-relaxed);
+}
+
+.footer__legal-text {
+  font-size: var(--text-xs);
+  color: rgba(247, 243, 232, 0.35);
+  line-height: var(--leading-relaxed);
+  max-width: 380px;
+}
+
+/* Column 2: Links */
+.footer__heading {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: var(--space-6);
+}
+
+.footer__link-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footer__link {
+  font-size: var(--text-sm);
+  color: rgba(247, 243, 232, 0.6);
+  transition: color 300ms ease;
+}
+
+.footer__link:hover {
+  color: var(--color-gold);
+}
+
+.footer__link-divider {
+  width: 40px;
+  height: 1px;
+  background-color: rgba(201, 163, 78, 0.2);
+  margin: var(--space-4) 0;
+}
+
+/* Column 3: Contact */
+.footer__contact-name {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  margin-bottom: var(--space-1);
+}
+
+.footer__contact-title {
+  font-size: var(--text-xs);
+  color: rgba(247, 243, 232, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-4);
+}
+
+.footer__contact-phone {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-gold);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  transition: color 300ms ease;
+}
+
+.footer__contact-phone:hover {
+  color: var(--color-champagne);
+}
+
+/* Bottom bar */
+.footer__bottom {
+  border-top: 1px solid rgba(201, 163, 78, 0.15);
+  padding-top: var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+.footer__copyright {
+  font-size: var(--text-xs);
+  color: rgba(247, 243, 232, 0.3);
+}
+
+.footer__shariah-note {
+  font-size: var(--text-xs);
+  color: rgba(247, 243, 232, 0.25);
+  max-width: 500px;
+  text-align: right;
+  line-height: var(--leading-relaxed);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .footer__shariah-note {
+    text-align: left;
+  }
+}

@@ -1,0 +1,251 @@
+/* ============================================
+   Commodity Table — Signature Horizontal Scroll
+   ============================================ */
+
+.commodity-table {
+  background-color: var(--color-forest);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle wood-grain texture */
+.commodity-table::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 120px,
+      rgba(201, 163, 78, 0.015) 120px,
+      rgba(201, 163, 78, 0.015) 121px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 200px,
+      rgba(255, 255, 255, 0.008) 200px,
+      rgba(255, 255, 255, 0.008) 201px
+    );
+  pointer-events: none;
+}
+
+.commodity-table__header {
+  padding: var(--space-20) var(--space-6) var(--space-12);
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.commodity-table__header .eyebrow {
+  margin-bottom: var(--space-4);
+}
+
+.commodity-table__title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--color-ivory);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-4);
+}
+
+.commodity-table__subtitle {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: rgba(247, 243, 232, 0.5);
+}
+
+/* Horizontal scroll container */
+.commodity-table__scroll-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.commodity-table__track {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0 var(--space-6);
+  will-change: transform;
+}
+
+.commodity-table__stage {
+  flex: 0 0 480px;
+  min-height: 55vh;
+  padding: var(--space-12) var(--space-10);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  opacity: 0.35;
+  transition: opacity 600ms ease;
+}
+
+.commodity-table__stage--active {
+  opacity: 1;
+}
+
+.commodity-table__stage-number {
+  position: absolute;
+  top: var(--space-8);
+  right: var(--space-8);
+  font-family: var(--font-serif);
+  font-size: 5rem;
+  font-weight: 700;
+  color: rgba(201, 163, 78, 0.07);
+  line-height: 1;
+  user-select: none;
+  transition: color 600ms ease;
+}
+
+.commodity-table__stage--active .commodity-table__stage-number {
+  color: rgba(201, 163, 78, 0.15);
+}
+
+.commodity-table__stage-label {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 600;
+  color: var(--color-ivory);
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-4);
+  position: relative;
+}
+
+.commodity-table__stage-label::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-6));
+  top: 50%;
+  width: 3px;
+  height: 24px;
+  transform: translateY(-50%);
+  background-color: var(--color-gold);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.commodity-table__stage--active .commodity-table__stage-label::before {
+  opacity: 1;
+}
+
+.commodity-table__stage-desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: rgba(247, 243, 232, 0.5);
+  line-height: var(--leading-relaxed);
+  max-width: 340px;
+  transition: color 600ms ease;
+}
+
+.commodity-table__stage--active .commodity-table__stage-desc {
+  color: rgba(247, 243, 232, 0.7);
+}
+
+/* Connecting arrow between stages */
+.commodity-table__connector {
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.commodity-table__arrow {
+  width: 40px;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(201, 163, 78, 0.3) 0,
+    rgba(201, 163, 78, 0.3) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  position: relative;
+}
+
+.commodity-table__arrow::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid rgba(201, 163, 78, 0.3);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+/* Progress bar */
+.commodity-table__progress {
+  position: absolute;
+  bottom: var(--space-8);
+  left: var(--space-6);
+  right: var(--space-6);
+  max-width: var(--content-width);
+  margin: 0 auto;
+  height: 1px;
+  background-color: rgba(201, 163, 78, 0.1);
+}
+
+.commodity-table__progress-fill {
+  height: 100%;
+  background-color: var(--color-gold);
+  width: 0%;
+  transition: width 100ms linear;
+}
+
+/* Mobile: vertical layout */
+.commodity-table__mobile {
+  display: none;
+  padding: 0 var(--space-6) var(--space-16);
+}
+
+.commodity-table__mobile-stage {
+  padding: var(--space-8) 0;
+  border-bottom: 1px solid rgba(201, 163, 78, 0.1);
+  position: relative;
+}
+
+.commodity-table__mobile-stage:last-child {
+  border-bottom: none;
+}
+
+.commodity-table__mobile-number {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: rgba(201, 163, 78, 0.15);
+  margin-bottom: var(--space-2);
+}
+
+.commodity-table__mobile-label {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-ivory);
+  margin-bottom: var(--space-3);
+}
+
+.commodity-table__mobile-desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: rgba(247, 243, 232, 0.6);
+  line-height: var(--leading-relaxed);
+}
+
+@media (max-width: 768px) {
+  .commodity-table__scroll-wrapper {
+    display: none;
+  }
+
+  .commodity-table__mobile {
+    display: block;
+  }
+
+  .commodity-table__progress {
+    display: none;
+  }
+}

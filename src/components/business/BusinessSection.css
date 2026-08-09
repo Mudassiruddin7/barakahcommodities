@@ -1,0 +1,164 @@
+/* ============================================
+   Business Section Styles
+   ============================================ */
+
+.business {
+  background-color: var(--color-bg-primary);
+}
+
+.business__panels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.business__panel {
+  position: relative;
+  min-height: 500px;
+  padding: var(--space-10) var(--space-8);
+  border-top: 2px solid var(--color-gold);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  transition: transform 500ms var(--ease-out), box-shadow 500ms var(--ease-out);
+  cursor: default;
+}
+
+.business__panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Panel visual backgrounds */
+.business__panel--spices {
+  background: linear-gradient(170deg, #F7F3E8 0%, #F0E6D2 30%, #E8D4B8 100%);
+}
+
+.business__panel--spices::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 30% 25%, rgba(139, 69, 19, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(210, 105, 30, 0.06) 0%, transparent 35%),
+    radial-gradient(circle at 50% 40%, rgba(205, 133, 63, 0.05) 0%, transparent 30%);
+  pointer-events: none;
+}
+
+.business__panel--dry-fruits {
+  background: linear-gradient(170deg, #F7F3E8 0%, #EDE3CE 30%, #E2D4B5 100%);
+}
+
+.business__panel--dry-fruits::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse at 40% 30%, rgba(107, 68, 35, 0.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 65% 70%, rgba(139, 105, 20, 0.06) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.business__panel--gold {
+  background: linear-gradient(170deg, #F7F3E8 0%, #F0E8D0 30%, #EAE0C4 100%);
+}
+
+.business__panel--gold::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(135deg, rgba(201, 163, 78, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 60% 50%, rgba(232, 214, 164, 0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Shimmer on gold panel */
+.business__panel--gold::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(201, 163, 78, 0.04) 45%,
+    rgba(201, 163, 78, 0.08) 50%,
+    rgba(201, 163, 78, 0.04) 55%,
+    transparent 60%
+  );
+  animation: shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-30%) translateY(-30%); }
+  50% { transform: translateX(30%) translateY(30%); }
+  100% { transform: translateX(-30%) translateY(-30%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .business__panel--gold::after {
+    animation: none;
+  }
+}
+
+.business__panel-number {
+  font-family: var(--font-serif);
+  font-size: 5rem;
+  font-weight: 600;
+  color: rgba(201, 163, 78, 0.12);
+  line-height: 1;
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-8);
+  user-select: none;
+}
+
+.business__panel-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  position: relative;
+  z-index: 1;
+}
+
+.business__panel-desc {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+  position: relative;
+  z-index: 1;
+}
+
+.business__panel-detail {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  position: relative;
+  z-index: 1;
+  max-width: 320px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .business__panels {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .business__panel {
+    min-height: 340px;
+  }
+}

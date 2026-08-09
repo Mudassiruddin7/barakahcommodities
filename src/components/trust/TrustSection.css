@@ -1,0 +1,88 @@
+/* ============================================
+   Trust Section Styles
+   ============================================ */
+
+.trust {
+  background-color: var(--color-bg-primary);
+}
+
+.trust__pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-10);
+  margin-bottom: var(--space-20);
+}
+
+.trust__pillar {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid rgba(201, 163, 78, 0.25);
+}
+
+.trust__pillar-number {
+  font-family: var(--font-serif);
+  font-size: 4rem;
+  font-weight: 600;
+  color: rgba(201, 163, 78, 0.15);
+  line-height: 1;
+  margin-bottom: var(--space-4);
+  user-select: none;
+}
+
+.trust__pillar-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.trust__pillar-desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+/* Contact */
+.trust__contact {
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.trust__contact-heading {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+}
+
+.trust__contact-name {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.trust__contact-phone {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-gold);
+  letter-spacing: 0.05em;
+  transition: color 300ms ease;
+}
+
+.trust__contact-phone:hover {
+  color: #B08F3E;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trust__pillars {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+}

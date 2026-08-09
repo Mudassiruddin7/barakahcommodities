@@ -1,0 +1,184 @@
+/* ============================================
+   Profit Model Styles
+   ============================================ */
+
+.profit {
+  background-color: var(--color-bg-section);
+}
+
+.profit__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  align-items: start;
+}
+
+/* Accounting flow (left column) */
+.profit__flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profit__flow-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background-color: #fff;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.profit__flow-step--result {
+  background-color: var(--color-emerald);
+  color: var(--color-ivory);
+}
+
+.profit__flow-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.profit__flow-step--result .profit__flow-label {
+  color: rgba(247, 243, 232, 0.8);
+}
+
+.profit__flow-amount {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.profit__flow-amount--debit {
+  color: #9B5B4F;
+}
+
+.profit__flow-amount--credit {
+  color: #2D7A54;
+}
+
+.profit__flow-amount--result {
+  color: var(--color-gold);
+}
+
+.profit__flow-operator {
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  padding: var(--space-1) 0;
+}
+
+/* Allocation (right column) */
+.profit__allocation {
+  padding: var(--space-8);
+  background-color: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.profit__allocation-heading {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.profit__allocation-example {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-8);
+}
+
+.profit__bar-group {
+  margin-bottom: var(--space-6);
+}
+
+.profit__bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-2);
+}
+
+.profit__bar-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.profit__bar-value {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+
+.profit__bar-track {
+  width: 100%;
+  height: 10px;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.profit__bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 1.2s var(--ease-out);
+}
+
+.profit__bar-fill--investor {
+  background-color: var(--color-emerald);
+}
+
+.profit__bar-fill--manager {
+  background-color: var(--color-gold);
+}
+
+/* Disclaimer box */
+.profit__disclaimer {
+  margin-top: var(--space-12);
+  padding: var(--space-6) var(--space-8);
+  background-color: rgba(155, 91, 79, 0.06);
+  border: 1px solid rgba(155, 91, 79, 0.15);
+  border-radius: var(--radius-md);
+}
+
+.profit__disclaimer-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #9B5B4F;
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.profit__disclaimer-text {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .profit__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+}
