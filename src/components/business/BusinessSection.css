@@ -1,164 +1,234 @@
-/* ============================================
-   Business Section Styles
-   ============================================ */
+/* ============================================================
+   01 · Business
+   ============================================================ */
 
 .business {
-  background-color: var(--color-bg-primary);
+  background: var(--bg-alt);
+  overflow: hidden;
 }
 
+.business__head {
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* ---------- Composition: display band, then panels ---------- */
+.business__composition {
+  position: relative;
+}
+
+/* The display is its own band. Keeping the 3D out from behind the copy is
+   what makes the section legible — the earlier overlay fought the text. */
+.business__display {
+  position: relative;
+  height: clamp(20rem, 34vw, 27rem);
+  background:
+    radial-gradient(90% 120% at 50% 108%, rgba(201, 163, 78, 0.16), transparent 62%),
+    linear-gradient(180deg, var(--emerald-deep) 0%, var(--forest) 100%);
+  overflow: hidden;
+}
+
+.business__stage {
+  position: absolute;
+  inset: 0;
+  /* Fade the plinths into the band rather than cutting them at its edges. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+}
+
+.business__stage-fallback {
+  position: absolute;
+  inset: 0;
+}
+
+.business__display-caption {
+  position: absolute;
+  left: var(--gutter);
+  bottom: var(--s5);
+  font-family: var(--serif);
+  font-size: var(--body-sm);
+  letter-spacing: var(--track-widest);
+  text-transform: uppercase;
+  color: var(--gold);
+  pointer-events: none;
+}
+
+/* ---------- Panels ---------- */
 .business__panels {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-6);
+  border-bottom: 1px solid var(--rule);
 }
 
 .business__panel {
   position: relative;
-  min-height: 500px;
-  padding: var(--space-10) var(--space-8);
-  border-top: 2px solid var(--color-gold);
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  transition: transform 500ms var(--ease-out), box-shadow 500ms var(--ease-out);
-  cursor: default;
+  padding: var(--s7) clamp(1rem, 2vw, 2rem) var(--s6);
+  min-height: clamp(19rem, 26vw, 23rem);
+  cursor: pointer;
+  transition: background-color var(--t-slow) var(--ease);
+  outline-offset: -3px;
 }
 
-.business__panel:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+/* Hairline dividers between panels, not around them. */
+.business__panel + .business__panel {
+  border-left: 1px solid var(--rule);
 }
 
-/* Panel visual backgrounds */
-.business__panel--spices {
-  background: linear-gradient(170deg, #F7F3E8 0%, #F0E6D2 30%, #E8D4B8 100%);
-}
-
-.business__panel--spices::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 30% 25%, rgba(139, 69, 19, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 70% 60%, rgba(210, 105, 30, 0.06) 0%, transparent 35%),
-    radial-gradient(circle at 50% 40%, rgba(205, 133, 63, 0.05) 0%, transparent 30%);
-  pointer-events: none;
-}
-
-.business__panel--dry-fruits {
-  background: linear-gradient(170deg, #F7F3E8 0%, #EDE3CE 30%, #E2D4B5 100%);
-}
-
-.business__panel--dry-fruits::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(ellipse at 40% 30%, rgba(107, 68, 35, 0.07) 0%, transparent 45%),
-    radial-gradient(ellipse at 65% 70%, rgba(139, 105, 20, 0.06) 0%, transparent 40%);
-  pointer-events: none;
-}
-
-.business__panel--gold {
-  background: linear-gradient(170deg, #F7F3E8 0%, #F0E8D0 30%, #EAE0C4 100%);
-}
-
-.business__panel--gold::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(135deg, rgba(201, 163, 78, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 60% 50%, rgba(232, 214, 164, 0.1) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-/* Shimmer on gold panel */
-.business__panel--gold::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+.business__panel.is-active {
   background: linear-gradient(
-    45deg,
-    transparent 40%,
-    rgba(201, 163, 78, 0.04) 45%,
-    rgba(201, 163, 78, 0.08) 50%,
-    rgba(201, 163, 78, 0.04) 55%,
-    transparent 60%
+    180deg,
+    rgba(201, 163, 78, 0.09) 0%,
+    rgba(201, 163, 78, 0) 68%
   );
-  animation: shimmer 6s ease-in-out infinite;
-  pointer-events: none;
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-30%) translateY(-30%); }
-  50% { transform: translateX(30%) translateY(30%); }
-  100% { transform: translateX(-30%) translateY(-30%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .business__panel--gold::after {
-    animation: none;
-  }
-}
-
-.business__panel-number {
-  font-family: var(--font-serif);
-  font-size: 5rem;
-  font-weight: 600;
-  color: rgba(201, 163, 78, 0.12);
-  line-height: 1;
+/* Gold marker that grows along the top rule of the active panel. */
+.business__panel::before {
+  content: '';
   position: absolute;
-  top: var(--space-6);
-  right: var(--space-8);
-  user-select: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-slow) var(--ease);
 }
 
-.business__panel-label {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0.15em;
+.business__panel.is-active::before {
+  transform: scaleX(1);
+}
+
+.business__panel-index {
+  display: block;
+  margin-bottom: var(--s5);
+}
+
+.business__panel-name {
+  font-family: var(--serif);
+  font-size: var(--display-3);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: var(--track-tight);
+  color: var(--emerald);
+  margin-bottom: var(--s2);
+}
+
+.business__panel-summary {
+  font-size: var(--body-sm);
+  letter-spacing: var(--track-wide);
   text-transform: uppercase;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-  position: relative;
-  z-index: 1;
+  color: var(--brass);
 }
 
-.business__panel-desc {
-  font-family: var(--font-serif);
-  font-size: var(--text-xl);
-  font-weight: 500;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-4);
-  position: relative;
-  z-index: 1;
+/* Detail is quieter until the panel is chosen, but never unreadable. */
+.business__panel-body {
+  margin-top: auto;
+  padding-top: var(--s6);
+  opacity: 0.72;
+  transition: opacity var(--t-slow) var(--ease);
+}
+
+.business__panel.is-active .business__panel-body {
+  opacity: 1;
 }
 
 .business__panel-detail {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  line-height: var(--leading-relaxed);
-  position: relative;
-  z-index: 1;
-  max-width: 320px;
+  font-size: var(--body);
+  line-height: 1.62;
+  color: var(--text-2);
+  margin-bottom: var(--s3);
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+.business__panel-note {
+  font-size: var(--micro);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--rule);
+}
+
+.business__panel-explore {
+  margin-top: var(--s5);
+  color: var(--emerald);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+}
+
+.business__panel.is-active .business__panel-explore {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.business__panel.is-active .business__panel-explore::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1023px) {
+  .business__panel {
+    min-height: 18rem;
+    padding: var(--s6) var(--s4) var(--s5);
+  }
+
+  .business__panel-body {
+    opacity: 1;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 767px) {
+  .business__display {
+    height: 40svh;
+  }
+
   .business__panels {
     grid-template-columns: 1fr;
-    gap: var(--space-4);
+    border-bottom: 0;
   }
 
   .business__panel {
-    min-height: 340px;
+    min-height: auto;
+    padding: var(--s5) 0;
+  }
+
+  .business__panel + .business__panel {
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .business__panel::before {
+    display: none;
+  }
+
+  .business__panel.is-active {
+    background: none;
+  }
+
+  .business__panel-body {
+    margin-top: var(--s4);
+    padding-top: 0;
+  }
+
+  .business__panel-explore {
+    display: none;
   }
 }

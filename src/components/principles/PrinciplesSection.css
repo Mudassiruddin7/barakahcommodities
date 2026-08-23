@@ -1,91 +1,115 @@
-/* ============================================
-   Principles Section Styles
-   ============================================ */
+/* ============================================================
+   07 · Principles
+   ============================================================ */
 
 .principles {
-  background-color: var(--color-emerald);
-  color: var(--color-ivory);
+  background: var(--bg);
 }
 
-.principles__cards {
+.principles__list {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: var(--space-5);
-  margin-bottom: var(--space-10);
+  gap: 0;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  border-top: 1px solid var(--rule);
 }
 
-.principles__card {
-  background-color: rgba(3, 31, 23, 0.4);
-  border-top: 2px solid rgba(201, 163, 78, 0.4);
-  padding: var(--space-8) var(--space-6);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  transition: background-color 400ms ease, transform 400ms ease;
+.principles__item {
+  position: relative;
+  padding: var(--s6) clamp(0.85rem, 1.6vw, 1.5rem) var(--s6) 0;
 }
 
-.principles__card:hover {
-  background-color: rgba(3, 31, 23, 0.6);
-  transform: translateY(-3px);
+.principles__item + .principles__item {
+  padding-left: clamp(0.85rem, 1.6vw, 1.5rem);
+  border-left: 1px solid var(--rule);
 }
 
-.principles__card-icon {
-  width: 36px;
-  height: 36px;
-  color: var(--color-gold);
-  margin-bottom: var(--space-5);
-  opacity: 0.7;
+/* The mark draws itself in on hover — quiet, and only where a cursor exists. */
+.principles__mark {
+  display: block;
+  width: 42px;
+  height: 42px;
+  color: var(--gold);
+  margin-bottom: var(--s5);
+  transition: color var(--t) var(--ease), transform var(--t-slow) var(--ease);
 }
 
-.principles__card-title-ar {
-  font-family: var(--font-serif);
-  font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--color-gold);
-  letter-spacing: 0.03em;
-  margin-bottom: var(--space-1);
+.principles__item:hover .principles__mark {
+  color: var(--emerald);
+  transform: rotate(45deg);
 }
 
-.principles__card-title-en {
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
+.principles__mark svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.principles__term {
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 1rem + 0.7vw, 1.65rem);
   font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--emerald);
+  margin-bottom: var(--s1);
+}
+
+.principles__english {
+  font-size: var(--micro);
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(247, 243, 232, 0.45);
-  margin-bottom: var(--space-4);
+  color: var(--brass);
+  margin-bottom: var(--s4);
 }
 
-.principles__card-desc {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  color: rgba(247, 243, 232, 0.65);
-  line-height: var(--leading-relaxed);
+.principles__desc {
+  font-size: var(--body-sm);
+  line-height: 1.62;
+  color: var(--text-2);
 }
 
-.principles__disclaimer {
-  text-align: center;
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  color: rgba(247, 243, 232, 0.3);
-  line-height: var(--leading-relaxed);
-  max-width: 600px;
-  margin: 0 auto;
+.principles__note {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  max-width: 56rem;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .principles__cards {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .principles__cards {
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .principles__list {
     grid-template-columns: repeat(2, 1fr);
+    border-top: 0;
+  }
+
+  .principles__item {
+    padding: var(--s5) var(--s4) var(--s5) 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .principles__item + .principles__item {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  /* Restore the vertical rule between the two columns. */
+  .principles__item:nth-child(even) {
+    padding-left: var(--s5);
+    border-left: 1px solid var(--rule);
+  }
+
+  .principles__mark {
+    width: 34px;
+    height: 34px;
+    margin-bottom: var(--s4);
   }
 }
 
-@media (max-width: 480px) {
-  .principles__cards {
+@media (max-width: 640px) {
+  .principles__list {
     grid-template-columns: 1fr;
+  }
+
+  .principles__item:nth-child(even) {
+    padding-left: 0;
+    border-left: 0;
   }
 }

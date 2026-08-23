@@ -1,0 +1,121 @@
+/* ============================================================
+   09 · Closing
+   ============================================================ */
+
+.closing {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(38rem, 88svh, 52rem);
+  display: flex;
+  align-items: center;
+  padding-block: clamp(5rem, 10vw, 9rem);
+  background: linear-gradient(165deg, var(--emerald-deep) 0%, var(--forest) 58%, var(--ink-green) 100%);
+  color: var(--text-on-dark);
+  overflow: hidden;
+}
+
+.closing__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.closing__stage-fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(50% 60% at 68% 55%, rgba(201, 163, 78, 0.2), transparent 70%);
+}
+
+/* Keeps the headline readable where the bar passes behind it. */
+.closing__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    92deg,
+    rgba(3, 31, 23, 0.96) 0%,
+    rgba(3, 31, 23, 0.92) 40%,
+    rgba(3, 31, 23, 0.4) 58%,
+    rgba(3, 31, 23, 0) 74%
+  );
+  pointer-events: none;
+}
+
+.closing__geo {
+  z-index: 1;
+  opacity: 0.04;
+}
+
+/*
+  Keeps the shell's own width so the copy stays left-aligned in the page
+  grid; narrowing this element instead re-centred the whole block, because
+  .shell centres itself with auto margins.
+*/
+.closing__content {
+  position: relative;
+  z-index: 2;
+}
+
+/* The copy is held to the left half; the bar owns the right. */
+.closing__content > * {
+  max-width: 40rem;
+}
+
+.closing__title {
+  font-size: var(--display-1);
+  font-weight: 300;
+  color: var(--ivory);
+  margin-block: var(--s5) var(--s5);
+  max-width: 16ch;
+}
+
+.closing__title .reveal-mask {
+  padding-block: 0.04em;
+}
+
+.closing__title .reveal-mask:last-child > * {
+  font-style: italic;
+  color: var(--champagne);
+}
+
+.closing__lede {
+  font-size: var(--body-lg);
+  font-weight: 300;
+  line-height: 1.62;
+  color: var(--text-on-dark-2);
+  max-width: 36rem;
+}
+
+.closing__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s4);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .closing__veil {
+    background: linear-gradient(
+      180deg,
+      rgba(3, 31, 23, 0.9) 0%,
+      rgba(3, 31, 23, 0.72) 52%,
+      rgba(3, 31, 23, 0.2) 100%
+    );
+  }
+}
+
+@media (max-width: 767px) {
+  .closing {
+    min-height: auto;
+  }
+
+  .closing__actions .btn {
+    width: 100%;
+  }
+
+  .closing__actions .magnetic {
+    flex: 1 1 100%;
+  }
+}

@@ -1,88 +1,116 @@
-/* ============================================
-   Trust Section Styles
-   ============================================ */
+/* ============================================================
+   08 · Trust
+   ============================================================ */
 
-.trust {
-  background-color: var(--color-bg-primary);
+.trust__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(2.5rem, 6vw, 5.5rem);
+  align-items: start;
 }
 
+/* ---------- Contact card ---------- */
+.trust__card {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--emerald);
+  color: var(--ivory);
+  border-left: 2px solid var(--gold);
+}
+
+.trust__card-eyebrow {
+  font-size: var(--micro);
+  letter-spacing: var(--track-widest);
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: var(--s4);
+}
+
+.trust__card-name {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 1.1rem + 0.9vw, 1.9rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ivory);
+  margin-bottom: var(--s1);
+}
+
+.trust__card-role {
+  font-size: var(--body-sm);
+  color: var(--text-on-dark-2);
+  margin-bottom: var(--s5);
+}
+
+.trust__card-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  font-family: var(--serif);
+  font-size: var(--title);
+  letter-spacing: 0.02em;
+  color: var(--champagne);
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(232, 214, 164, 0.35);
+  transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+
+.trust__card-phone svg {
+  transition: transform var(--t) var(--ease);
+}
+
+.trust__card-phone:hover,
+.trust__card-phone:focus-visible {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.trust__card-phone:hover svg {
+  transform: translateX(3px);
+}
+
+/* ---------- Pillars ---------- */
 .trust__pillars {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-10);
-  margin-bottom: var(--space-20);
+  border-top: 1px solid var(--rule);
 }
 
 .trust__pillar {
-  padding-bottom: var(--space-6);
-  border-bottom: 1px solid rgba(201, 163, 78, 0.25);
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: var(--s4);
+  padding-block: clamp(1.5rem, 3vw, 2.25rem);
+  border-bottom: 1px solid var(--rule);
 }
 
-.trust__pillar-number {
-  font-family: var(--font-serif);
-  font-size: 4rem;
-  font-weight: 600;
-  color: rgba(201, 163, 78, 0.15);
-  line-height: 1;
-  margin-bottom: var(--space-4);
-  user-select: none;
+.trust__pillar-index {
+  padding-top: 0.35rem;
 }
 
 .trust__pillar-title {
-  font-family: var(--font-serif);
-  font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 1.05rem + 0.8vw, 1.8rem);
+  font-weight: 400;
+  letter-spacing: var(--track-tight);
+  color: var(--emerald);
+  margin-bottom: var(--s2);
 }
 
-.trust__pillar-desc {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  line-height: var(--leading-relaxed);
+.trust__pillar-detail {
+  font-size: var(--body);
+  line-height: 1.64;
+  color: var(--text-2);
+  max-width: 38rem;
 }
 
-/* Contact */
-.trust__contact {
-  text-align: center;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-.trust__contact-heading {
-  font-family: var(--font-serif);
-  font-size: var(--text-2xl);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-6);
-}
-
-.trust__contact-name {
-  font-family: var(--font-serif);
-  font-size: var(--text-lg);
-  font-weight: 500;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.trust__contact-phone {
-  font-family: var(--font-sans);
-  font-size: var(--text-xl);
-  font-weight: 500;
-  color: var(--color-gold);
-  letter-spacing: 0.05em;
-  transition: color 300ms ease;
-}
-
-.trust__contact-phone:hover {
-  color: #B08F3E;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .trust__pillars {
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .trust__grid {
     grid-template-columns: 1fr;
-    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 767px) {
+  .trust__pillar {
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--s3);
   }
 }

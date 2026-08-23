@@ -1,155 +1,186 @@
-// ============================================
-// Navbar — Premium Fixed Navigation
-// ============================================
+// ============================================================
+// Navbar — transparent over the hero, solid once you leave it.
+// ============================================================
 
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { NAV_LINKS, CONTACT } from '../../utils/constants';
+import { useCallback, useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { BRAND, CONTACT, NAV_LINKS } from '../../content';
+import { useReducedMotion, useScrollLock, useSmoothScrollTo } from '../../hooks';
+import { EASE } from '../../utils/motion';
 import './Navbar.css';
 
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+const SECTION_IDS = NAV_LINKS.map((l) => l.href.slice(1));
 
-  // Scroll detection via IntersectionObserver on a sentinel
+export default function Navbar() {
+  const [solid, setSolid] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string>('');
+  const reducedMotion = useReducedMotion();
+  const scrollTo = useSmoothScrollTo();
+
+  useScrollLock(open);
+
+  // Solidify once the hero sentinel has left the top of the page.
   useEffect(() => {
     const sentinel = document.getElementById('nav-sentinel');
-    if (!sentinel) {
-      // Fallback: listen to scroll
-      const onScroll = () => setScrolled(window.scrollY > 60);
-      window.addEventListener('scroll', onScroll, { passive: true });
-      return () => window.removeEventListener('scroll', onScroll);
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setScrolled(!entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
+    if (!sentinel) return;
+    const io = new IntersectionObserver(([entry]) => setSolid(!entry.isIntersecting), {
+      threshold: 0,
+    });
+    io.observe(sentinel);
+    return () => io.disconnect();
   }, []);
 
-  // Body scroll lock when mobile menu open
+  // Mark the section currently occupying the middle of the viewport.
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
+    const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(
+      (el): el is HTMLElement => el !== null
+    );
+    if (!sections.length) return;
 
-  const handleNavClick = useCallback(
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    );
+
+    sections.forEach((s) => io.observe(s));
+    return () => io.disconnect();
+  }, []);
+
+  // Escape closes the mobile menu.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const go = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
       e.preventDefault();
-      setMobileOpen(false);
-      const target = document.querySelector(href);
-      target?.scrollIntoView({ behavior: 'smooth' });
+      setOpen(false);
+      scrollTo(href);
     },
-    []
+    [scrollTo]
   );
 
-  const handleLogoClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} role="navigation" aria-label="Main navigation">
-      <div className="navbar__inner">
-        {/* Logo */}
-        <div className="navbar__logo" onClick={handleLogoClick} role="button" tabIndex={0} aria-label="Scroll to top">
-          <span className="navbar__logo-main">BARAKAH</span>
-          <span className="navbar__logo-sub">COMMODITIES</span>
-        </div>
+    <header className={`nav ${solid ? 'nav--solid' : ''} ${open ? 'nav--open' : ''}`}>
+      <div className="nav__bar shell">
+        <a
+          href="#hero"
+          className="nav__logo"
+          onClick={(e) => {
+            e.preventDefault();
+            setOpen(false);
+            window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+          }}
+          aria-label={`${BRAND.name} — back to top`}
+        >
+          <span className="nav__logo-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              {/* Khatam star: two squares, the same motif as the desk inlay */}
+              <rect x="4" y="4" width="16" height="16" stroke="currentColor" strokeWidth="1.1" />
+              <rect
+                x="4"
+                y="4"
+                width="16"
+                height="16"
+                stroke="currentColor"
+                strokeWidth="1.1"
+                transform="rotate(45 12 12)"
+              />
+            </svg>
+          </span>
+          <span className="nav__logo-type">
+            <span className="nav__logo-top">{BRAND.logoTop}</span>
+            <span className="nav__logo-bottom">{BRAND.logoBottom}</span>
+          </span>
+        </a>
 
-        {/* Desktop Links */}
-        <div className="navbar__links">
+        <nav className="nav__links" aria-label="Primary">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="navbar__link"
-              onClick={(e) => handleNavClick(e, link.href)}
+              className={`nav__link ${active === link.href.slice(1) ? 'is-active' : ''}`}
+              onClick={(e) => go(e, link.href)}
             >
               {link.label}
             </a>
           ))}
-        </div>
+        </nav>
 
-        {/* Desktop CTA */}
-        <a
-          href={CONTACT.phoneHref}
-          className="navbar__cta"
-          style={{ display: undefined }}
-        >
-          Talk to Us
+        <a href={CONTACT.phoneHref} className="nav__cta">
+          Talk to us
         </a>
 
-        {/* Hamburger */}
         <button
-          className="navbar__hamburger"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileOpen}
+          className="nav__toggle"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="nav-menu"
+          aria-label={open ? 'Close menu' : 'Open menu'}
         >
-          <motion.span
-            className="navbar__hamburger-line"
-            animate={mobileOpen
-              ? { rotate: 45, y: 0, translateY: 0 }
-              : { rotate: 0, y: -4, translateY: 0 }
-            }
-            style={{ position: 'absolute' }}
-            transition={{ duration: 0.3 }}
-          />
-          <motion.span
-            className="navbar__hamburger-line"
-            animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.2 }}
-          />
-          <motion.span
-            className="navbar__hamburger-line"
-            animate={mobileOpen
-              ? { rotate: -45, y: 0, translateY: 0 }
-              : { rotate: 0, y: 4, translateY: 0 }
-            }
-            style={{ position: 'absolute' }}
-            transition={{ duration: 0.3 }}
-          />
+          <span className={`nav__toggle-bar ${open ? 'is-open' : ''}`} />
+          <span className={`nav__toggle-bar ${open ? 'is-open' : ''}`} />
         </button>
       </div>
 
-      {/* Mobile Overlay */}
       <AnimatePresence>
-        {mobileOpen && (
+        {open && (
           <motion.div
-            className="navbar__mobile-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            id="nav-menu"
+            className="nav__menu"
+            initial={{ clipPath: 'inset(0 0 100% 0)' }}
+            animate={{ clipPath: 'inset(0 0 0% 0)' }}
+            exit={{ clipPath: 'inset(0 0 100% 0)' }}
+            transition={{ duration: reducedMotion ? 0 : 0.55, ease: EASE }}
           >
-            {NAV_LINKS.map((link, i) => (
-              <motion.a
-                key={link.href}
-                href={link.href}
-                className="navbar__mobile-link"
-                onClick={(e) => handleNavClick(e, link.href)}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ delay: 0.05 + i * 0.08, duration: 0.4 }}
-              >
-                {link.label}
-              </motion.a>
-            ))}
-            <motion.a
-              href={CONTACT.phoneHref}
-              className="navbar__mobile-cta"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.4 }}
+            <div className="geo-field" aria-hidden="true" />
+
+            <nav className="nav__menu-links" aria-label="Mobile">
+              {NAV_LINKS.map((link, i) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  className="nav__menu-link"
+                  onClick={(e) => go(e, link.href)}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: reducedMotion ? 0 : 0.5,
+                    ease: EASE,
+                    delay: reducedMotion ? 0 : 0.18 + i * 0.06,
+                  }}
+                >
+                  <span className="nav__menu-index">{`0${i + 1}`}</span>
+                  {link.label}
+                </motion.a>
+              ))}
+            </nav>
+
+            <motion.div
+              className="nav__menu-foot"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: reducedMotion ? 0 : 0.48, duration: 0.4 }}
             >
-              Talk to Us
-            </motion.a>
+              <p className="nav__menu-name">{CONTACT.name}</p>
+              <a href={CONTACT.phoneHref} className="nav__menu-phone">
+                {CONTACT.phone}
+              </a>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </header>
   );
 }

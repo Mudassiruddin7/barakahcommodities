@@ -1,184 +1,225 @@
-/* ============================================
-   Profit Model Styles
-   ============================================ */
-
-.profit {
-  background-color: var(--color-bg-section);
-}
+/* ============================================================
+   04 · Profit model
+   ============================================================ */
 
 .profit__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-16);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
   align-items: start;
 }
 
-/* Accounting flow (left column) */
-.profit__flow {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.profit__flow-step {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-6);
-  background-color: #fff;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-}
-
-.profit__flow-step--result {
-  background-color: var(--color-emerald);
-  color: var(--color-ivory);
-}
-
-.profit__flow-label {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-}
-
-.profit__flow-step--result .profit__flow-label {
-  color: rgba(247, 243, 232, 0.8);
-}
-
-.profit__flow-amount {
-  font-family: var(--font-sans);
-  font-size: var(--text-lg);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-}
-
-.profit__flow-amount--debit {
-  color: #9B5B4F;
-}
-
-.profit__flow-amount--credit {
-  color: #2D7A54;
-}
-
-.profit__flow-amount--result {
-  color: var(--color-gold);
-}
-
-.profit__flow-operator {
-  text-align: center;
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  padding: var(--space-1) 0;
-}
-
-/* Allocation (right column) */
-.profit__allocation {
-  padding: var(--space-8);
-  background-color: #fff;
-  border-radius: var(--radius-md);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-}
-
-.profit__allocation-heading {
-  font-family: var(--font-serif);
-  font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.profit__allocation-example {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-8);
-}
-
-.profit__bar-group {
-  margin-bottom: var(--space-6);
-}
-
-.profit__bar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: var(--space-2);
-}
-
-.profit__bar-label {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text-secondary);
-}
-
-.profit__bar-value {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-primary);
-}
-
-.profit__bar-track {
+/* ---------- Calculation table ---------- */
+.profit__table {
   width: 100%;
+  border-collapse: collapse;
+}
+
+.profit__row {
+  border-bottom: 1px solid var(--rule);
+}
+
+.profit__cell-label {
+  text-align: left;
+  font-weight: 400;
+  padding: var(--s5) var(--s4) var(--s5) 0;
+}
+
+.profit__operator {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: var(--body-sm);
+  color: var(--brass);
+  margin-bottom: var(--s1);
+}
+
+.profit__label {
+  display: block;
+  font-size: var(--body-lg);
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.profit__hint {
+  display: block;
+  font-size: var(--body-sm);
+  color: var(--text-3);
+  margin-top: var(--s1);
+}
+
+.profit__cell-amount {
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: clamp(1.15rem, 0.9rem + 0.8vw, 1.6rem);
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: var(--s5) 0;
+  color: var(--text-2);
+}
+
+.profit__row--debit .profit__cell-amount::before {
+  content: '−';
+  margin-right: 0.15em;
+  color: var(--text-3);
+}
+
+.profit__row--result {
+  border-bottom: 2px solid var(--emerald);
+  border-top: 1px solid var(--rule-strong);
+}
+
+.profit__row--result .profit__label {
+  color: var(--emerald);
+  font-weight: 500;
+}
+
+.profit__row--result .profit__cell-amount {
+  color: var(--emerald);
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.2rem);
+}
+
+/* ---------- Allocation ---------- */
+.profit__split {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--s6));
+  padding: clamp(1.75rem, 3vw, 2.5rem);
+  background: var(--parchment);
+  border: 1px solid var(--rule);
+}
+
+.profit__split-title {
+  font-family: var(--serif);
+  font-size: var(--title);
+  font-weight: 500;
+  color: var(--emerald);
+  margin-bottom: var(--s3);
+}
+
+.profit__split-note {
+  font-size: var(--body-sm);
+  line-height: 1.6;
+  color: var(--text-2);
+  margin-bottom: var(--s6);
+}
+
+.profit__split-note strong {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.profit__bar {
+  display: flex;
   height: 10px;
-  background-color: rgba(0, 0, 0, 0.06);
-  border-radius: 5px;
-  overflow: hidden;
+  gap: 2px;
+  margin-bottom: var(--s6);
 }
 
-.profit__bar-fill {
+.profit__bar-part {
+  display: block;
   height: 100%;
-  border-radius: 5px;
-  transition: width 1.2s var(--ease-out);
+  transform-origin: left;
+  transition: transform 1.1s var(--ease);
 }
 
-.profit__bar-fill--investor {
-  background-color: var(--color-emerald);
+/* Widths are the ratio; the transform animates the fill within them. */
+.profit__bar-part--investor {
+  flex: 70;
+  background: var(--emerald);
 }
 
-.profit__bar-fill--manager {
-  background-color: var(--color-gold);
+.profit__bar-part--manager {
+  flex: 30;
+  background: var(--gold);
 }
 
-/* Disclaimer box */
-.profit__disclaimer {
-  margin-top: var(--space-12);
-  padding: var(--space-6) var(--space-8);
-  background-color: rgba(155, 91, 79, 0.06);
-  border: 1px solid rgba(155, 91, 79, 0.15);
-  border-radius: var(--radius-md);
+.profit__shares {
+  display: grid;
+  gap: var(--s4);
 }
 
-.profit__disclaimer-title {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: #9B5B4F;
-  margin-bottom: var(--space-3);
+.profit__share {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding-bottom: var(--s4);
+  border-bottom: 1px solid var(--rule);
+}
+
+.profit__share:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.profit__share dt {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--s2);
+  font-size: var(--body-sm);
+  color: var(--text-2);
 }
 
-.profit__disclaimer-text {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  line-height: var(--leading-relaxed);
+.profit__swatch {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  transform: rotate(45deg);
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+.profit__swatch--investor {
+  background: var(--emerald);
+}
+
+.profit__swatch--manager {
+  background: var(--gold);
+}
+
+.profit__ratio {
+  color: var(--text-3);
+  font-size: var(--micro);
+  letter-spacing: var(--track-wide);
+}
+
+.profit__share dd {
+  font-family: var(--serif);
+  font-size: var(--title);
+  font-weight: 500;
+  color: var(--emerald);
+  white-space: nowrap;
+}
+
+/* ---------- Disclaimer ---------- */
+.profit__note {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  max-width: 52rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
   .profit__grid {
     grid-template-columns: 1fr;
-    gap: var(--space-10);
+  }
+
+  .profit__split {
+    position: static;
+  }
+}
+
+@media (max-width: 767px) {
+  .profit__cell-label {
+    padding: var(--s4) var(--s3) var(--s4) 0;
+  }
+
+  .profit__cell-amount {
+    padding: var(--s4) 0;
+  }
+
+  .profit__hint {
+    display: none;
   }
 }

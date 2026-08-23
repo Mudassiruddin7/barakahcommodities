@@ -1,159 +1,244 @@
-/* ============================================
-   Transparency Section Styles
-   ============================================ */
+/* ============================================================
+   05 · Transparency
+   ============================================================ */
 
 .transparency {
-  background-color: var(--color-forest);
-  color: var(--color-ivory);
+  background: var(--bg-alt);
 }
 
-/* Animated Ledger */
-.transparency__ledger {
-  max-width: 700px;
-  margin: 0 auto var(--space-16);
-  position: relative;
-  border: 1px solid rgba(201, 163, 78, 0.12);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.2);
+/* ---------- 2.5D ledger sheet ---------- */
+.transparency__scene {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  perspective: 1400px;
+  perspective-origin: 50% 0%;
 }
 
-.transparency__ledger-label {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-4);
-  font-family: var(--font-sans);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-gold);
-  opacity: 0.6;
+.transparency__sheet {
+  background: var(--parchment);
+  border: 1px solid var(--rule);
+  /* A sheet laid on a desk, tilting flat as it comes into view. */
+  transform: rotateX(11deg) translateY(18px) scale(0.985);
+  transform-origin: 50% 0%;
+  opacity: 0.85;
+  transition: transform 1.15s var(--ease), opacity 0.8s var(--ease),
+    box-shadow 1.15s var(--ease);
+  box-shadow: 0 22px 44px -32px rgba(22, 24, 20, 0.55);
 }
 
-.transparency__ledger-header {
-  display: grid;
-  grid-template-columns: 1fr 100px 140px;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-6);
-  border-bottom: 1px solid rgba(201, 163, 78, 0.12);
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(247, 243, 232, 0.4);
+.transparency__sheet.is-flat {
+  transform: rotateX(0deg) translateY(0) scale(1);
+  opacity: 1;
+  box-shadow: 0 10px 30px -26px rgba(22, 24, 20, 0.4);
 }
 
-.transparency__ledger-row {
-  display: grid;
-  grid-template-columns: 1fr 100px 140px;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-6);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-variant-numeric: tabular-nums;
+.transparency__sheet-head {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  padding: var(--s5) clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--rule);
 }
 
-.transparency__ledger-row:last-child {
-  border-bottom: none;
-  background-color: rgba(201, 163, 78, 0.06);
+.transparency__sheet-title {
+  font-family: var(--serif);
+  font-size: var(--title);
+  color: var(--emerald);
 }
 
-.transparency__ledger-entry {
-  color: rgba(247, 243, 232, 0.8);
-  font-weight: 500;
-}
-
-.transparency__ledger-type {
-  font-size: var(--text-xs);
+.transparency__tag {
+  font-size: var(--micro);
+  font-weight: 600;
+  letter-spacing: var(--track-widest);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  color: var(--brass);
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(201, 163, 78, 0.45);
+  background: rgba(201, 163, 78, 0.08);
+  white-space: nowrap;
+}
+
+/* ---------- Table ---------- */
+.transparency__table-wrap {
+  overflow-x: auto;
+}
+
+.transparency__table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+}
+
+.transparency__table th {
+  text-align: left;
+  font-size: var(--micro);
   font-weight: 500;
+  letter-spacing: var(--track-widest);
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: var(--s4) clamp(0.75rem, 2vw, 1.25rem);
+  border-bottom: 1px solid var(--rule);
 }
 
-.transparency__ledger-type--debit {
-  color: #CC6B5A;
-}
-
-.transparency__ledger-type--credit {
-  color: #4CAF7D;
-}
-
-.transparency__ledger-type--result {
-  color: var(--color-gold);
-  font-weight: 600;
-}
-
-.transparency__ledger-amount {
+.transparency__table th.is-num,
+.transparency__amount {
   text-align: right;
+}
+
+.transparency__table td {
+  padding: var(--s4) clamp(0.75rem, 2vw, 1.25rem);
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--body);
+  color: var(--text-2);
+  vertical-align: baseline;
+}
+
+.transparency__table tbody tr:first-child td {
+  padding-top: var(--s5);
+}
+
+.transparency__date {
+  white-space: nowrap;
+  color: var(--text-3);
+  font-size: var(--body-sm);
+}
+
+.transparency__particulars {
+  color: var(--text);
+}
+
+.transparency__ref {
+  font-size: var(--body-sm);
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.transparency__amount {
+  white-space: nowrap;
+  font-family: var(--serif);
+  font-size: 1.1rem;
   font-weight: 500;
-  color: rgba(247, 243, 232, 0.7);
+  color: var(--text);
 }
 
-.transparency__ledger-row:last-child .transparency__ledger-amount {
-  color: var(--color-gold);
-  font-weight: 600;
+.transparency__sign {
+  color: var(--text-3);
+  margin-right: 0.1em;
 }
 
-/* Pillars */
-.transparency__pillars {
+.transparency__row--credit .transparency__amount {
+  color: var(--emerald);
+}
+
+/* The result line closes the account. */
+.transparency__row--result td {
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 0;
+  padding-top: var(--s5);
+  padding-bottom: var(--s5);
+  background: rgba(6, 59, 42, 0.04);
+}
+
+.transparency__row--result .transparency__particulars {
+  font-weight: 500;
+  color: var(--emerald);
+}
+
+.transparency__row--result .transparency__amount {
+  font-size: 1.35rem;
+  color: var(--emerald);
+}
+
+.transparency__sheet-foot {
+  padding: var(--s4) clamp(1rem, 3vw, 2rem) var(--s5);
+  font-size: var(--body-sm);
+  line-height: 1.6;
+  color: var(--text-3);
+  border-top: 1px solid var(--rule);
+}
+
+/* ---------- Record types ---------- */
+.transparency__records {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-6);
-  margin-bottom: var(--space-16);
+  gap: 1px;
+  margin-top: clamp(3rem, 5vw, 4.5rem);
+  background: var(--rule);
+  border: 1px solid var(--rule);
 }
 
-.transparency__pillar {
-  border-top: 2px solid rgba(201, 163, 78, 0.3);
-  padding-top: var(--space-5);
+.transparency__record {
+  background: var(--bg-alt);
+  padding: var(--s6) var(--s5);
+  transition: background-color var(--t) var(--ease);
 }
 
-.transparency__pillar-icon {
-  width: 28px;
-  height: 28px;
-  margin-bottom: var(--space-3);
-  opacity: 0.5;
+.transparency__record:hover {
+  background: var(--parchment);
 }
 
-.transparency__pillar-name {
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
+.transparency__record-mark {
+  display: block;
+  width: 7px;
+  height: 7px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  margin-bottom: var(--s4);
+}
+
+.transparency__record-label {
+  font-family: var(--serif);
+  font-size: var(--title);
   font-weight: 500;
-  color: rgba(247, 243, 232, 0.8);
+  color: var(--emerald);
+  margin-bottom: var(--s2);
 }
 
-/* Quote */
-.transparency__quote {
-  text-align: center;
-  font-family: var(--font-serif);
-  font-size: var(--text-2xl);
+.transparency__record-detail {
+  font-size: var(--body-sm);
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+/* ---------- Closing line ---------- */
+.transparency__closing {
+  margin-top: clamp(3rem, 5vw, 4.5rem);
+  font-family: var(--serif);
+  font-size: var(--display-3);
+  font-weight: 300;
   font-style: italic;
-  font-weight: 500;
-  color: var(--color-gold);
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: var(--leading-snug);
+  line-height: 1.32;
+  letter-spacing: var(--track-tight);
+  color: var(--emerald);
+  max-width: 32rem;
+  text-wrap: balance;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .transparency__pillars {
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .transparency__records {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .transparency__ledger-header,
-  .transparency__ledger-row {
-    grid-template-columns: 1fr 70px 100px;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-  }
 }
 
-@media (max-width: 480px) {
-  .transparency__pillars {
+@media (max-width: 767px) {
+  .transparency__scene {
+    perspective: none;
+  }
+
+  .transparency__sheet {
+    transform: none;
+    opacity: 1;
+    margin-inline: calc(var(--gutter) * -1);
+    border-inline: 0;
+  }
+
+  .transparency__records {
     grid-template-columns: 1fr;
+  }
+
+  .transparency__record {
+    padding: var(--s5) var(--s4);
   }
 }

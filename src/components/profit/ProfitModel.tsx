@@ -1,162 +1,170 @@
-// ============================================
-// Profit Model — Animated Accounting Flow
-// ============================================
+// ============================================================
+// 04 · Profit model — how profit is calculated.
+//
+// A worked example, labelled as one. No live counter, no rate, no
+// monthly figure: the point is the method, and the method is
+// subtraction.
+// ============================================================
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { PROFIT_EXAMPLE } from '../../utils/constants';
-import { useReducedMotion, useInView } from '../../hooks';
-import { fadeInUp, staggerContainer } from '../../utils/animations';
+import { PROFIT, PROFIT_LINES, PROFIT_SPLIT, formatINR } from '../../content';
+import { useInView, useReducedMotion } from '../../hooks';
+import { VIEWPORT, countUp, maskUp, riseIn, stagger } from '../../utils/motion';
 import './ProfitModel.css';
-
-function formatINR(n: number): string {
-  return '₹' + n.toLocaleString('en-IN');
-}
 
 export default function ProfitModel() {
   const reducedMotion = useReducedMotion();
-  const [barRef, inView] = useInView({ threshold: 0.3 } as IntersectionObserverInit);
-  const [animated, setAnimated] = useState(false);
-  const investorBarRef = useRef<HTMLDivElement>(null);
-  const managerBarRef = useRef<HTMLDivElement>(null);
+  const flowRef = useRef<HTMLDivElement>(null);
+  const amountRefs = useRef<Map<string, HTMLSpanElement>>(new Map());
+  const [splitRef, splitInView] = useInView<HTMLDivElement>({ threshold: 0.35 });
 
+  // Each figure counts up once, as its own line arrives.
   useEffect(() => {
-    if (inView && !animated) {
-      setAnimated(true);
-      // Animate bars
-      if (investorBarRef.current) {
-        investorBarRef.current.style.width = `${PROFIT_EXAMPLE.investorRatio}%`;
-      }
-      if (managerBarRef.current) {
-        managerBarRef.current.style.width = `${PROFIT_EXAMPLE.managerRatio}%`;
-      }
-    }
-  }, [inView, animated]);
+    const flow = flowRef.current;
+    if (!flow) return;
 
-  const containerVariants = reducedMotion ? {} : staggerContainer;
-  const itemVariants = reducedMotion ? {} : fadeInUp;
+    if (reducedMotion) {
+      PROFIT_LINES.forEach((line) => {
+        const el = amountRefs.current.get(line.id);
+        if (el) el.textContent = formatINR(line.amount);
+      });
+      return;
+    }
+
+    const disposers = PROFIT_LINES.map((line) => {
+      const el = amountRefs.current.get(line.id);
+      if (!el) return () => {};
+      return countUp(el, line.amount, { trigger: flow, format: formatINR });
+    });
+
+    return () => disposers.forEach((dispose) => dispose());
+  }, [reducedMotion]);
+
+  const registerAmount = (id: string) => (el: HTMLSpanElement | null) => {
+    if (el) amountRefs.current.set(id, el);
+    else amountRefs.current.delete(id);
+  };
 
   return (
-    <section className="section section--alt profit" id="profit" aria-label="Profit Model">
-      <div className="container">
-        <div className="section-header">
-          <p className="eyebrow section-header__eyebrow">PROFIT SHARING</p>
-          <h2 className="section-header__title">HOW PROFIT IS CALCULATED</h2>
-        </div>
+    <section className="section section--sand profit" id="profit" aria-labelledby="profit-title">
+      <div className="shell">
+        <motion.div
+          className="s-head"
+          variants={stagger(0.1)}
+          initial="hidden"
+          whileInView="show"
+          viewport={VIEWPORT}
+        >
+          <motion.p className="eyebrow" variants={riseIn}>
+            {PROFIT.eyebrow}
+          </motion.p>
+          <h2 className="s-head__title" id="profit-title">
+            <span className="reveal-mask">
+              <motion.span variants={maskUp}>{PROFIT.title}</motion.span>
+            </span>
+          </h2>
+          <motion.p className="lede" variants={riseIn}>
+            {PROFIT.lede}
+          </motion.p>
+        </motion.div>
 
-        <div className="profit__grid" ref={barRef}>
-          {/* Accounting Flow */}
-          <motion.div
-            className="profit__flow"
-            variants={containerVariants}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-60px' }}
-          >
-            <motion.div className="profit__flow-step" variants={itemVariants}>
-              <span className="profit__flow-label">Gross Sales</span>
-              <span className="profit__flow-amount profit__flow-amount--credit">
-                {formatINR(PROFIT_EXAMPLE.grossSales)}
-              </span>
-            </motion.div>
+        <div className="profit__grid">
+          {/* ---- The calculation ---- */}
+          <div className="profit__flow" ref={flowRef}>
+            <table className="profit__table">
+              <caption className="sr-only">
+                Illustrative calculation of net business profit
+              </caption>
+              <tbody>
+                {PROFIT_LINES.map((line) => (
+                  <motion.tr
+                    key={line.id}
+                    className={`profit__row profit__row--${line.kind}`}
+                    initial={reducedMotion ? undefined : { opacity: 0, y: 16 }}
+                    whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+                    viewport={VIEWPORT}
+                    transition={{ duration: 0.55 }}
+                  >
+                    <th scope="row" className="profit__cell-label">
+                      {line.operator && (
+                        <span className="profit__operator">{line.operator}</span>
+                      )}
+                      <span className="profit__label">{line.label}</span>
+                      <span className="profit__hint">{line.hint}</span>
+                    </th>
+                    <td className="profit__cell-amount tnum">
+                      <span ref={registerAmount(line.id)}>{formatINR(0)}</span>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-            <motion.p className="profit__flow-operator" variants={itemVariants}>minus</motion.p>
-
-            <motion.div className="profit__flow-step" variants={itemVariants}>
-              <span className="profit__flow-label">Cost of Goods</span>
-              <span className="profit__flow-amount profit__flow-amount--debit">
-                {formatINR(PROFIT_EXAMPLE.costOfGoods)}
-              </span>
-            </motion.div>
-
-            <motion.p className="profit__flow-operator" variants={itemVariants}>minus</motion.p>
-
-            <motion.div className="profit__flow-step" variants={itemVariants}>
-              <span className="profit__flow-label">Direct Expenses</span>
-              <span className="profit__flow-amount profit__flow-amount--debit">
-                {formatINR(PROFIT_EXAMPLE.directExpenses)}
-              </span>
-            </motion.div>
-
-            <motion.p className="profit__flow-operator" variants={itemVariants}>equals</motion.p>
-
-            <motion.div className="profit__flow-step profit__flow-step--result" variants={itemVariants}>
-              <span className="profit__flow-label">Net Profit</span>
-              <span className="profit__flow-amount profit__flow-amount--result">
-                {formatINR(PROFIT_EXAMPLE.netProfit)}
-              </span>
-            </motion.div>
-          </motion.div>
-
-          {/* Allocation Visual */}
-          <motion.div
-            className="profit__allocation"
-            initial={reducedMotion ? undefined : { opacity: 0, y: 30 }}
-            whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
-            <h3 className="profit__allocation-heading">Profit Allocation</h3>
-            <p className="profit__allocation-example">
-              Illustrative example: {formatINR(PROFIT_EXAMPLE.illustrativeNet)} net profit
+          {/* ---- The split ---- */}
+          <div className="profit__split" ref={splitRef}>
+            <h3 className="profit__split-title">Agreed profit allocation</h3>
+            <p className="profit__split-note">
+              On an illustrative net business profit of{' '}
+              <strong>{formatINR(PROFIT_SPLIT.net)}</strong>, at an illustrative agreed
+              ratio of {PROFIT_SPLIT.investorRatio}:{PROFIT_SPLIT.managerRatio}.
             </p>
 
-            {/* Investor bar */}
-            <div className="profit__bar-group">
-              <div className="profit__bar-header">
-                <span className="profit__bar-label">
-                  Investor (Rab-ul-Mal) — {PROFIT_EXAMPLE.investorRatio}%
-                </span>
-                <span className="profit__bar-value">
-                  {formatINR(PROFIT_EXAMPLE.investorShare)}
-                </span>
-              </div>
-              <div className="profit__bar-track">
-                <div
-                  className="profit__bar-fill profit__bar-fill--investor"
-                  ref={investorBarRef}
-                  style={{ width: animated ? `${PROFIT_EXAMPLE.investorRatio}%` : '0%' }}
-                />
-              </div>
+            {/* One bar, divided — the ratio is a single quantity being shared. */}
+            <div
+              className="profit__bar"
+              role="img"
+              aria-label={`${PROFIT_SPLIT.investorRatio} percent to the investor, ${PROFIT_SPLIT.managerRatio} percent to the manager`}
+            >
+              {/*
+                The ratio is already the flex basis of each part, so the
+                transform only animates the fill from empty to full. Scaling
+                by the ratio as well would apply it twice.
+              */}
+              <span
+                className="profit__bar-part profit__bar-part--investor"
+                style={{ transform: `scaleX(${splitInView || reducedMotion ? 1 : 0})` }}
+              />
+              <span
+                className="profit__bar-part profit__bar-part--manager"
+                style={{
+                  transform: `scaleX(${splitInView || reducedMotion ? 1 : 0})`,
+                  transitionDelay: '160ms',
+                }}
+              />
             </div>
 
-            {/* Manager bar */}
-            <div className="profit__bar-group">
-              <div className="profit__bar-header">
-                <span className="profit__bar-label">
-                  Manager (Mudarib) — {PROFIT_EXAMPLE.managerRatio}%
-                </span>
-                <span className="profit__bar-value">
-                  {formatINR(PROFIT_EXAMPLE.managerShare)}
-                </span>
+            <dl className="profit__shares">
+              <div className="profit__share">
+                <dt>
+                  <span className="profit__swatch profit__swatch--investor" aria-hidden="true" />
+                  {PROFIT_SPLIT.investorLabel}
+                  <span className="profit__ratio tnum">{PROFIT_SPLIT.investorRatio}%</span>
+                </dt>
+                <dd className="tnum">{formatINR(PROFIT_SPLIT.investorShare)}</dd>
               </div>
-              <div className="profit__bar-track">
-                <div
-                  className="profit__bar-fill profit__bar-fill--manager"
-                  ref={managerBarRef}
-                  style={{ width: animated ? `${PROFIT_EXAMPLE.managerRatio}%` : '0%' }}
-                />
+              <div className="profit__share">
+                <dt>
+                  <span className="profit__swatch profit__swatch--manager" aria-hidden="true" />
+                  {PROFIT_SPLIT.managerLabel}
+                  <span className="profit__ratio tnum">{PROFIT_SPLIT.managerRatio}%</span>
+                </dt>
+                <dd className="tnum">{formatINR(PROFIT_SPLIT.managerShare)}</dd>
               </div>
-            </div>
-          </motion.div>
+            </dl>
+          </div>
         </div>
 
-        {/* DISCLAIMER — Prominently displayed */}
         <motion.div
-          className="profit__disclaimer"
-          initial={reducedMotion ? undefined : { opacity: 0, y: 20 }}
+          className="note profit__note"
+          initial={reducedMotion ? undefined : { opacity: 0, y: 14 }}
           whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.6 }}
         >
-          <p className="profit__disclaimer-title">
-            ⚠ ILLUSTRATIVE EXAMPLE — NOT A FORECAST OR GUARANTEED RETURN
-          </p>
-          <p className="profit__disclaimer-text">
-            The above figures are for illustration purposes only. Actual business results
-            depend on market conditions, commodity prices, and operational factors. Past
-            performance does not guarantee future results. Profit is not fixed or guaranteed.
-          </p>
+          <p className="note__label">{PROFIT.disclaimerLabel}</p>
+          <p className="note__text">{PROFIT.disclaimerBody}</p>
         </motion.div>
       </div>
     </section>

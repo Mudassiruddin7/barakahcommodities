@@ -1,84 +1,99 @@
-// ============================================
-// Risk Section — Honest Disclosure + 3D Scale
-// ============================================
+// ============================================================
+// 06 · Risk — stated plainly, neither hidden nor dramatised.
+// ============================================================
 
 import { Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
-import { RISK_POINTS, RISK_DISCLAIMERS } from '../../utils/constants';
-import { useReducedMotion, useInView, useWebGLAvailable } from '../../hooks';
-import { fadeInUp, staggerContainer } from '../../utils/animations';
+import Stage from '../../three/Stage';
+import { RISK, RISK_POINTS, RISK_STATEMENTS } from '../../content';
+import { useDeviceTier, useReducedMotion, useScrollProgressRef } from '../../hooks';
+import { VIEWPORT, maskUp, riseIn, stagger } from '../../utils/motion';
 import './RiskSection.css';
 
-const BalanceSceneCanvas = lazy(() => import('../three/BalanceScale'));
-
-function ScaleFallbackIcon() {
-  return (
-    <div className="risk__scene-fallback">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-        <path d="M12 3v18M3 7l3 7h0a6 6 0 0012 0h0l3-7" />
-        <circle cx="6" cy="14" r="3" />
-        <circle cx="18" cy="14" r="3" />
-      </svg>
-    </div>
-  );
-}
+const BalanceScene = lazy(() => import('../../three/scenes/BalanceScene'));
 
 export default function RiskSection() {
   const reducedMotion = useReducedMotion();
-  const webglAvailable = useWebGLAvailable();
-  const [sceneRef, sceneInView] = useInView({ rootMargin: '100px 0px' } as IntersectionObserverInit);
-
-  const containerVariants = reducedMotion ? {} : staggerContainer;
-  const itemVariants = reducedMotion ? {} : fadeInUp;
+  const tier = useDeviceTier();
+  const [sectionRef, progressRef] = useScrollProgressRef<HTMLElement>();
 
   return (
-    <section className="section risk" id="risk" aria-label="Risk Disclosure">
-      <div className="container">
-        <div className="section-header">
-          <p className="eyebrow section-header__eyebrow">RISK DISCLOSURE</p>
-          <h2 className="section-header__title">REAL BUSINESS MEANS REAL RISK.</h2>
+    <section
+      className="section section--dark risk"
+      id="risk"
+      ref={sectionRef}
+      aria-labelledby="risk-title"
+    >
+      <div className="shell risk__grid">
+        <div className="risk__copy">
+          <motion.div
+            variants={stagger(0.1)}
+            initial="hidden"
+            whileInView="show"
+            viewport={VIEWPORT}
+          >
+            <motion.p className="eyebrow" variants={riseIn}>
+              {RISK.eyebrow}
+            </motion.p>
+            <h2 className="s-head__title" id="risk-title">
+              <span className="reveal-mask">
+                <motion.span variants={maskUp}>{RISK.title}</motion.span>
+              </span>
+            </h2>
+            <motion.p className="lede" variants={riseIn}>
+              {RISK.lede}
+            </motion.p>
+          </motion.div>
+
+          <motion.ul
+            className="risk__points"
+            variants={stagger(0.08, 0.1)}
+            initial="hidden"
+            whileInView="show"
+            viewport={VIEWPORT}
+          >
+            {RISK_POINTS.map((point) => (
+              <motion.li key={point.id} className="risk__point" variants={riseIn}>
+                <h3 className="risk__point-label">{point.label}</h3>
+                <p className="risk__point-detail">{point.detail}</p>
+              </motion.li>
+            ))}
+          </motion.ul>
+
+          <motion.ul
+            className="risk__statements"
+            variants={stagger(0.07, 0.15)}
+            initial="hidden"
+            whileInView="show"
+            viewport={VIEWPORT}
+          >
+            {RISK_STATEMENTS.map((statement) => (
+              <motion.li key={statement} variants={riseIn}>
+                {statement}
+              </motion.li>
+            ))}
+          </motion.ul>
         </div>
 
-        <div className="risk__grid">
-          {/* Text Column */}
-          <div>
-            <motion.div
-              className="risk__points"
-              variants={containerVariants}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true, margin: '-60px' }}
-            >
-              {RISK_POINTS.map((point, i) => (
-                <motion.div key={i} className="risk__point" variants={itemVariants}>
-                  <span className="risk__point-bullet" />
-                  <p className="risk__point-text">{point.text}</p>
-                </motion.div>
-              ))}
-            </motion.div>
+        <div className="risk__visual">
+          <Stage
+            className="risk__stage"
+            label="A brass balance with profit on one pan and risk on the other"
+            camera={{ position: [0, 1.5, 5.4], fov: 34, near: 0.1, far: 40 }}
+            fallback={<div className="risk__stage-fallback" />}
+          >
+            <Suspense fallback={null}>
+              <BalanceScene
+                progressRef={progressRef}
+                tier={tier}
+                reducedMotion={reducedMotion}
+              />
+            </Suspense>
+          </Stage>
 
-            <motion.div
-              className="risk__disclaimers"
-              initial={reducedMotion ? undefined : { opacity: 0, x: -15 }}
-              whileInView={reducedMotion ? undefined : { opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              {RISK_DISCLAIMERS.map((d, i) => (
-                <p key={i} className="risk__disclaimer-item">{d}</p>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* 3D Scene Column — Canvas is inside the component itself now */}
-          <div className="risk__scene" ref={sceneRef}>
-            {webglAvailable && sceneInView ? (
-              <Suspense fallback={<ScaleFallbackIcon />}>
-                <BalanceSceneCanvas />
-              </Suspense>
-            ) : (
-              <ScaleFallbackIcon />
-            )}
+          <div className="risk__pans" aria-hidden="true">
+            <span className="risk__pan-label risk__pan-label--profit">Profit</span>
+            <span className="risk__pan-label risk__pan-label--risk">Risk</span>
           </div>
         </div>
       </div>
