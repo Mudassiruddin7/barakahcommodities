@@ -3,7 +3,7 @@
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: clamp(1.5rem, 4vw, 5rem);
   align-items: end;
-  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
 }
 
 .principles__head .head {
@@ -18,7 +18,7 @@
 /* Five strips, edge to edge. */
 .principles__strips {
   display: flex;
-  height: clamp(30rem, 74svh, 42rem);
+  height: clamp(26rem, 62svh, 34rem);
 }
 
 .strip {
@@ -130,7 +130,7 @@
 }
 
 .principles__note {
-  margin-top: clamp(3rem, 6vw, 5rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
 }
 
 .principles__note > * {

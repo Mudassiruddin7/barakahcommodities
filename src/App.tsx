@@ -20,15 +20,11 @@ import ProfitModel from './components/profit/ProfitModel';
 import TransparencySection from './components/transparency/TransparencySection';
 import RiskSection from './components/risk/RiskSection';
 import PrinciplesSection from './components/principles/PrinciplesSection';
-import TrustSection from './components/trust/TrustSection';
 import ClosingSection from './components/closing/ClosingSection';
 
 import { ScrollTrigger } from './utils/motion';
-import { initScroll } from './utils/scroll';
 
 export default function App() {
-  useEffect(() => initScroll(), []);
-
   // Web fonts and the first 3D frame both change layout height, so give
   // ScrollTrigger a fresh measurement once things have settled.
   useEffect(() => {
@@ -60,7 +56,6 @@ export default function App() {
         <TransparencySection />
         <RiskSection />
         <PrinciplesSection />
-        <TrustSection />
         <ClosingSection />
       </main>
 

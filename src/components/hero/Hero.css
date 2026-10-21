@@ -1,8 +1,4 @@
 .hero {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: min(100svh, 1000px);
   padding-top: calc(var(--nav-h) + clamp(0.75rem, 2.5vw, 2.5rem));
   overflow: clip;
 }
@@ -43,39 +39,40 @@
   font-weight: 600;
 }
 
-/* The goods take whatever height is left under the headline. */
-.hero__stage {
+/* The goods: one picture, full width, sitting on the page's own paper. */
+.hero__art {
   position: relative;
-  flex: 1 1 auto;
-  min-height: clamp(280px, 38vw, 560px);
-  pointer-events: none;
+  max-width: var(--shell);
+  margin: clamp(1rem, 3vw, 2.5rem) auto 0;
+  padding-inline: var(--gutter);
 }
 
+.hero__art img {
+  width: 100%;
+  height: auto;
+  animation: art-in 700ms var(--ease-out) 150ms both;
+}
+
+@keyframes art-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Visible by default: the slam is an enhancement, not a requirement. */
 .hero__stamp {
   position: absolute;
-  z-index: 2;
-  bottom: clamp(1rem, 3vw, 3rem);
+  top: 0;
   right: calc(var(--gutter) + 0.5rem);
-  width: clamp(104px, 9.5vw, 150px);
+  width: clamp(88px, 9.5vw, 150px);
   height: auto;
-  /* Visible by default: the slam is an enhancement, not a requirement. */
   opacity: 0.92;
   pointer-events: none;
   transform: rotate(-11deg);
 }
 
-.hero__fallback {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
 @media (max-width: 899px) {
-  .hero {
-    min-height: 0;
-  }
-
   .hero__top {
     grid-template-columns: 1fr;
   }
@@ -92,15 +89,7 @@
     max-width: 30ch;
   }
 
-  .hero__stage {
-    flex: none;
-    height: clamp(280px, 88vw, 500px);
-    margin-top: 0;
-  }
-
   .hero__stamp {
-    bottom: clamp(1rem, 4vw, 2rem);
-    right: var(--gutter);
-    width: clamp(84px, 22vw, 130px);
+    width: clamp(76px, 20vw, 120px);
   }
 }

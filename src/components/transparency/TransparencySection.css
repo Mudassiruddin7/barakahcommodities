@@ -1,25 +1,24 @@
-.records__head {
+.records__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: clamp(1.5rem, 4vw, 5rem);
-  align-items: end;
-  margin-bottom: clamp(3rem, 7vw, 6rem);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2rem, 5vw, 6rem);
+  align-items: center;
 }
 
-.records__head .head {
+.records__copy .head {
   max-width: 12ch;
 }
 
-.records__head .lead {
-  max-width: 34ch;
-  padding-bottom: 0.4rem;
+.records__copy .lead {
+  margin-top: 1.25rem;
+  max-width: 30ch;
 }
 
-.records__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(2.5rem, 6vw, 7rem);
-  align-items: start;
+.records__closing {
+  margin-top: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  max-width: 32ch;
 }
 
 /* ---------- The ledger page ---------- */
@@ -116,30 +115,6 @@
   pointer-events: none;
 }
 
-/* ---------- Kinds of record ---------- */
-.records__types {
-  display: grid;
-  gap: clamp(1.4rem, 2.4vw, 2rem);
-}
-
-.records__types h3 {
-  font-family: var(--font-display);
-  font-weight: 850;
-  font-size: clamp(1.8rem, 1.2rem + 1.6vw, 2.6rem);
-  line-height: 1;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.records__types p {
-  margin-top: 0.2rem;
-}
-
-.records__closing {
-  margin-top: clamp(4rem, 9vw, 8rem);
-  max-width: 14ch;
-}
-
 @media (max-width: 520px) {
   /* On a phone the reference column goes; date, particulars and the money stay. */
   .records__table th:nth-child(3),
@@ -163,7 +138,6 @@
 }
 
 @media (max-width: 899px) {
-  .records__head,
   .records__grid {
     grid-template-columns: 1fr;
   }

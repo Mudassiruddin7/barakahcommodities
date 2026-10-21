@@ -2,35 +2,23 @@
 // Hero — what the business is, in the first screen.
 //
 // A poster. The headline is set like a sack mark across the top; the
-// goods that are bought and sold are laid out below it on the same paper,
-// and a rubber stamp comes down on them once the page has settled.
+// goods that are bought and sold sit below it on the same paper, and a
+// rubber stamp comes down on them once the page has settled.
 // ============================================================
 
-import { lazy, useMemo, useRef, type MouseEvent } from 'react';
+import { useRef, type MouseEvent } from 'react';
 import { useGSAP } from '@gsap/react';
-import Stage from '../../three/Stage';
 import Stamp from '../ui/Stamp';
 import Arrow from '../ui/Arrow';
-import { useIsMobile, usePointerRef, useReducedMotion, useScrollProgressRef } from '../../hooks';
 import { BRAND, HERO } from '../../content';
 import { EASE_OUT, gsap, prefersReducedMotion, revealLines } from '../../utils/motion';
 import { scrollToHash } from '../../utils/scroll';
 import './Hero.css';
 
-const HeroScene = lazy(() => import('../../three/scenes/HeroScene'));
-
 export default function Hero() {
-  const reducedMotion = useReducedMotion();
-  const mobile = useIsMobile();
-  const pointerRef = usePointerRef(!reducedMotion && !mobile);
-  const [sectionRef, progressRef] = useScrollProgressRef<HTMLElement>('exit');
+  const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const stampRef = useRef<SVGSVGElement>(null);
-
-  const camera = useMemo(
-    () => ({ position: [0.3, 4.6, 8.6] as [number, number, number], fov: 30, near: 0.1, far: 80 }),
-    []
-  );
 
   useGSAP(
     () => {
@@ -41,24 +29,23 @@ export default function Hero() {
       gsap.from('.hero__rise', {
         opacity: 0,
         y: 14,
-        duration: 0.7,
+        duration: 0.6,
         ease: EASE_OUT,
-        stagger: 0.09,
-        delay: 0.5,
+        stagger: 0.08,
+        delay: 0.35,
       });
 
       // The stamp comes down hard, squashes a hair, and rests.
-      const stamp = stampRef.current;
-      if (stamp) {
+      if (stampRef.current) {
         gsap
-          .timeline({ delay: 1.45 })
+          .timeline({ delay: 1.0 })
           .fromTo(
-            stamp,
+            stampRef.current,
             { scale: 1.45, opacity: 0, rotate: -24 },
             { scale: 1, opacity: 0.92, rotate: -11, duration: 0.24, ease: 'power2.in' }
           )
-          .to(stamp, { scale: 0.955, duration: 0.07, ease: 'power1.out' })
-          .to(stamp, { scale: 1, duration: 0.3, ease: EASE_OUT });
+          .to(stampRef.current, { scale: 0.955, duration: 0.07, ease: 'power1.out' })
+          .to(stampRef.current, { scale: 1, duration: 0.3, ease: EASE_OUT });
       }
 
       return undo;
@@ -102,31 +89,20 @@ export default function Hero() {
         </div>
       </div>
 
-      <Stage
-        className="hero__stage"
-        label="A market stall laid out on paper: a jute sack of turmeric, a dish of almonds, stacked gold bars stamped with the Barakah hallmark, a dish of black pepper, chillies, dates, pistachios and spices"
-        camera={camera}
-        fallback={<HeroFallback />}
-      >
-        <HeroScene pointerRef={pointerRef} progressRef={progressRef} compact={mobile} />
-      </Stage>
-
-      <Stamp ref={stampRef} className="hero__stamp" ring={BRAND.name} lines={HERO.stamp} />
+      <div className="hero__art">
+        <picture>
+          <source media="(max-width: 899px)" srcSet="/images/hero-compact.webp" width="1573" height="699" />
+          <img
+            src="/images/hero.webp"
+            width="2612"
+            height="700"
+            alt="A market stall laid out on paper: a jute sack of turmeric, a dish of almonds, stacked gold bars stamped with the Barakah hallmark, a dish of black pepper, chillies, dates, pistachios and spices"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
+        <Stamp ref={stampRef} className="hero__stamp" ring={BRAND.name} lines={HERO.stamp} />
+      </div>
     </section>
-  );
-}
-
-/** Flat drawing of the same goods, for when WebGL is not available. */
-function HeroFallback() {
-  return (
-    <svg className="hero__fallback" viewBox="0 0 960 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-      <ellipse cx="480" cy="270" rx="420" ry="16" fill="var(--ink)" opacity="0.12" />
-      <path d="M380 262h200l32 -56H412z" fill="var(--turmeric)" />
-      <path d="M412 206h200l-10 -26H422z" fill="var(--turmeric-2)" />
-      <path d="M70 262c-26-80 6-132 62-132s90 52 62 132z" fill="#b99557" />
-      <path d="M96 138c16-30 62-30 78 0z" fill="var(--turmeric)" />
-      <ellipse cx="780" cy="254" rx="96" ry="20" fill="#d7a24a" />
-      <ellipse cx="780" cy="244" rx="78" ry="14" fill="var(--ink)" opacity="0.8" />
-    </svg>
   );
 }

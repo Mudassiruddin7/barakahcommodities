@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
   gap: clamp(2rem, 5vw, 6rem);
-  align-items: start;
+  align-items: center;
 }
 
 .risk__copy .head {
@@ -18,7 +18,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(1.75rem, 3vw, 2.75rem) clamp(1.5rem, 3vw, 3rem);
-  margin-top: clamp(2.5rem, 5vw, 4rem);
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
 }
 
 .risk__points h3 {
@@ -36,7 +36,7 @@
 }
 
 .risk__statements {
-  margin-top: clamp(2.5rem, 5vw, 4rem);
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
   display: grid;
   gap: 0.35rem;
   font-size: var(--step-lead);
@@ -44,21 +44,9 @@
   line-height: 1.25;
 }
 
-/* The balance stays in view while the copy beside it scrolls. */
-.risk__figure {
-  position: sticky;
-  top: calc(var(--nav-h) + 3vh);
-}
-
-.risk__stage {
-  height: min(70svh, 44rem);
-  pointer-events: none;
-}
-
-.risk__fallback {
-  position: absolute;
-  inset: 12% 8%;
-  background: var(--surface);
+.risk__figure img {
+  width: 100%;
+  height: auto;
 }
 
 .risk__figure figcaption {
@@ -73,13 +61,7 @@
   }
 
   .risk__figure {
-    position: relative;
-    top: auto;
     order: -1;
-  }
-
-  .risk__stage {
-    height: clamp(300px, 80vw, 480px);
   }
 }
 

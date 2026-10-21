@@ -53,6 +53,14 @@ export default function ClosingSection() {
             {CLOSING.secondaryCta}
           </a>
         </div>
+
+        <p className="closing__who">
+          <strong>{CONTACT.name}</strong>, {CONTACT.role}
+          <br />
+          <a className="link tnum" href={CONTACT.phoneHref}>
+            {CONTACT.phone}
+          </a>
+        </p>
       </div>
     </section>
   );

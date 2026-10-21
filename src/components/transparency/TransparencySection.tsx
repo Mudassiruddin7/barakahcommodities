@@ -8,20 +8,17 @@
 
 import { useEffect, useRef, type CSSProperties } from 'react';
 import { useInView } from '../../hooks';
-import { LEDGER_ROWS, RECORD_TYPES, TRANSPARENCY, formatINR } from '../../content';
+import { LEDGER_ROWS, TRANSPARENCY, formatINR } from '../../content';
 import { revealLines } from '../../utils/motion';
 import './TransparencySection.css';
 
 export default function TransparencySection() {
-  const [bookRef, inView] = useInView<HTMLElement>({ threshold: 0.25 });
+  const [bookRef, inView] = useInView<HTMLElement>({ threshold: 0.2 });
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const closingRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    const undo: (() => void)[] = [];
-    if (titleRef.current) undo.push(revealLines(titleRef.current));
-    if (closingRef.current) undo.push(revealLines(closingRef.current));
-    return () => undo.forEach((fn) => fn());
+    if (!titleRef.current) return;
+    return revealLines(titleRef.current);
   }, []);
 
   return (
@@ -31,14 +28,15 @@ export default function TransparencySection() {
       data-nav="cardamom"
       aria-labelledby="records-title"
     >
-      <header className="shell records__head">
-        <h2 className="head" id="records-title" ref={titleRef}>
-          {TRANSPARENCY.title}
-        </h2>
-        <p className="lead">{TRANSPARENCY.lede}</p>
-      </header>
-
       <div className="shell records__grid">
+        <div className="records__copy">
+          <h2 className="head" id="records-title" ref={titleRef}>
+            {TRANSPARENCY.title}
+          </h2>
+          <p className="lead">{TRANSPARENCY.lede}</p>
+          <p className="records__closing">{TRANSPARENCY.closing}</p>
+        </div>
+
         <figure className="records__book" ref={bookRef} data-in={inView}>
           <table className="records__table">
             <caption>
@@ -83,21 +81,6 @@ export default function TransparencySection() {
             entries
           </span>
         </figure>
-
-        <ul className="records__types">
-          {RECORD_TYPES.map((r) => (
-            <li key={r.id}>
-              <h3>{r.label}</h3>
-              <p>{r.detail}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="shell">
-        <p className="head records__closing" ref={closingRef}>
-          {TRANSPARENCY.closing}
-        </p>
       </div>
     </section>
   );

@@ -51,7 +51,7 @@
   --shell: 1680px;
   --measure: 60ch;
   --nav-h: 64px;
-  --section-y: clamp(5rem, 10vw, 11rem);
+  --section-y: clamp(3.5rem, 7vw, 7rem);
 
   /* Motion — Emil Kowalski's strong curves, not the browser defaults */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -132,8 +132,9 @@ html {
   text-size-adjust: 100%;
 }
 
-html:not(.lenis) {
+html {
   scroll-padding-top: var(--nav-h);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -220,24 +221,6 @@ html[data-field='chilli'] {
 html[data-field='cardamom'] {
   --page-bg: var(--cardamom);
   --page-thumb: var(--bone);
-}
-
-/* Lenis — smooth scroll must not fight native behaviour */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: clip;
 }
 
 /* ---------- Layout ---------- */
@@ -446,17 +429,3 @@ html.lenis body {
   isolation: isolate;
 }
 
-/* ---------- 3D stage slot ---------- */
-.stage {
-  position: relative;
-}
-
-.stage__canvas,
-.stage__lost {
-  position: absolute;
-  inset: 0;
-}
-
-.stage__lost {
-  background: var(--bg);
-}

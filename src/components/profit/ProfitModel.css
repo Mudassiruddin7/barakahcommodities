@@ -3,7 +3,7 @@
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   gap: clamp(1.5rem, 4vw, 5rem);
   align-items: end;
-  margin-bottom: clamp(3rem, 7vw, 6rem);
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
 }
 
 .profit__head .head {
@@ -173,7 +173,7 @@
 
 /* ---------- The disclaimer ---------- */
 .profit__note {
-  margin-top: clamp(3rem, 6vw, 5rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 }

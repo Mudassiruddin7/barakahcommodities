@@ -356,15 +356,6 @@ export const LEDGER_ROWS: LedgerRow[] = [
   },
 ];
 
-export const RECORD_TYPES = [
-  { id: 'purchase', label: 'Purchase records', detail: 'Invoices, weights and grades' },
-  { id: 'sales', label: 'Sales records', detail: 'Buyer, quantity and realised price' },
-  { id: 'expense', label: 'Expense records', detail: 'Transport, storage, handling' },
-  { id: 'inventory', label: 'Inventory', detail: 'Stock held, counted and valued' },
-  { id: 'pl', label: 'Profit & loss', detail: 'Period result, computed from entries' },
-  { id: 'reporting', label: 'Investor reporting', detail: 'Statements per the agreement' },
-];
-
 // ---------- 07 · Risk ----------
 export const RISK = {
   title: 'Real business means real risk.',
@@ -454,29 +445,6 @@ export const PRINCIPLES: Principle[] = [
       'Only permissible commodities, bought and sold through legitimate commercial channels.',
   },
 ];
-
-// ---------- 09 · Trust ----------
-export const TRUST = {
-  title: 'Built on three things.',
-  speakTo: 'Speak to',
-  pillars: [
-    {
-      title: 'Transparent records',
-      detail:
-        'Every purchase, sale and expense is documented and available for review by the partner whose capital is at work.',
-    },
-    {
-      title: 'Responsible management',
-      detail:
-        'Positions are sized to what the business can carry. Preserving capital comes before chasing a larger result.',
-    },
-    {
-      title: 'Long-term relationships',
-      detail:
-        'The intent is repeat partnership over years, which only holds if each cycle is reported honestly.',
-    },
-  ],
-} as const;
 
 // ---------- 10 · Closing ----------
 export const CLOSING = {
