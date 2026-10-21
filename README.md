@@ -126,7 +126,7 @@ UI components never import three.js. Scenes never contain DOM.
 - **At most two live WebGL contexts.** A canvas is created when its slot gets
   within about a screen of the viewport and destroyed again when it is far
   away. Browsers cap live contexts (Chrome: 16) and kill the oldest past that,
-  which used to blank earlier scenes after a few scrolls. WebGL capability is
+  which is the likely reason earlier scenes used to go blank after some scrolling. WebGL capability is
   probed once, not once per canvas.
 - **No hole is ever left.** No WebGL, a lost context, a failed chunk or a
   throwing scene all resolve to a designed flat fallback. A restored context
@@ -137,8 +137,9 @@ UI components never import three.js. Scenes never contain DOM.
 - No model, image or HDR files ship. Textures are generated procedurally and
   cached at module scope; goods are instanced (one draw call per kind of good).
 - Shadows are real shadow maps falling on a transparent `ShadowMaterial` floor,
-  so the objects sit on the page's own paper. (drei's `ContactShadows` does not
-  render on three 0.185 and was replaced.)
+  so the objects sit on the page's own paper. drei's `ContactShadows` was
+  tried first: it rendered nothing under software WebGL on three 0.185 (even for
+  a plain box), and it bakes once, which misses goods that are still pouring in.
 
 ### Two things worth knowing before editing scenes
 
