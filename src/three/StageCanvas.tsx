@@ -1,109 +1,78 @@
 // ============================================================
-// StageCanvas — the actual Canvas. Loaded only on demand.
+// StageCanvas — the actual Canvas. Only ever loaded on demand.
 //
-// Everything that pulls in three.js lives behind this module so
-// the first paint never waits on the 3D bundle. Stage.tsx is the
-// lazy boundary; this is what it loads.
+// Everything that pulls in three.js lives behind this module so the
+// first paint never waits on the 3D bundle. Stage.tsx owns the lazy
+// boundary and the lifetime; this owns the render loop:
 //
-// Responsibilities:
-//   • never run a render loop for a scene that is off-screen
-//   • cap DPR by measured device capability, then let
-//     PerformanceMonitor claw it back down if frames drop
-//   • degrade to a typographic fallback with no WebGL
+//   · no frames at all while the scene is off-screen or the tab hidden
+//   · DPR capped by measured device tier, clawed back if frames drop
+//   · a lost WebGL context swaps in the flat fallback, and a restored one
+//     rebuilds the scene from scratch
 // ============================================================
 
-import {
-  Suspense,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Canvas, type CameraProps } from '@react-three/fiber';
-import { AdaptiveDpr, PerformanceMonitor } from '@react-three/drei';
+import { PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
-import { useDeviceTier, useWebGLSupport } from '../hooks';
+import { getGLInfo } from './gl';
+import { StageContext } from './context';
+import { useReducedMotion } from '../hooks';
 
-export interface StageProps {
+export interface StageCanvasProps {
   children: ReactNode;
   camera?: CameraProps;
-  /** Rendered instead of the canvas when WebGL is unavailable. */
   fallback?: ReactNode;
-  className?: string;
-  /** Extra margin so a scene warms up just before it scrolls into view. */
-  rootMargin?: string;
-  /** Scenes with no idle motion re-render only when something asks them to. */
-  onDemand?: boolean;
-  label?: string;
 }
 
-const DPR_CEILING: Record<'high' | 'medium' | 'low', number> = {
-  high: 1.75,
-  medium: 1.35,
-  low: 1,
-};
-
-function StageCanvas({
-  children,
-  camera,
-  fallback,
-  className,
-  rootMargin = '250px 0px',
-  onDemand = false,
-  label,
-}: StageProps) {
+function StageCanvas({ children, camera, fallback }: StageCanvasProps) {
+  const info = getGLInfo();
   const hostRef = useRef<HTMLDivElement>(null);
-  // Both start true on purpose. Mounting the Canvas with frameloop="never"
-  // means R3F never runs the frame that applies its first size measurement,
-  // and the canvas stays stuck at the 300x150 default. Stage only mounts this
-  // component once the section is near the viewport, so starting at "always"
-  // and letting the observer pause it costs at most a frame or two.
-  const [onScreen, setOnScreen] = useState(true);
+  const reducedMotion = useReducedMotion();
+
+  // Starts true on purpose. R3F only applies its first size measurement on a
+  // rendered frame, so a canvas created with frameloop="never" stays at the
+  // 300x150 HTML default. Stage mounts this only when the slot is near the
+  // viewport, and the observers below pause it within a frame if it is not.
+  const [nearScreen, setNearScreen] = useState(true);
+  const [inView, setInView] = useState(false);
   const [tabActive, setTabActive] = useState(true);
-  const tier = useDeviceTier();
-  const webgl = useWebGLSupport();
-  const ceiling = DPR_CEILING[tier];
-  const [dpr, setDpr] = useState(1);
+  const [lost, setLost] = useState(false);
+  const [epoch, setEpoch] = useState(0);
+  const [dpr, setDpr] = useState(() => Math.min(window.devicePixelRatio || 1, info.dprCeiling));
 
-  useEffect(() => {
-    setDpr(Math.min(window.devicePixelRatio || 1, ceiling));
-  }, [ceiling]);
-
-  // Pause the loop entirely while the section is out of view. This is the
-  // single biggest win on a long scrolling page with several canvases.
   useEffect(() => {
     const host = hostRef.current;
-    if (!host) return;
+    if (!host || typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
 
-    if (typeof IntersectionObserver === 'undefined') return;
+    const near = new IntersectionObserver(([e]) => setNearScreen(e.isIntersecting), {
+      rootMargin: '200px 0px',
+    });
+    const visible = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
+      threshold: 0.2,
+    });
+    near.observe(host);
+    visible.observe(host);
+    return () => {
+      near.disconnect();
+      visible.disconnect();
+    };
+  }, []);
 
-    const io = new IntersectionObserver(
-      ([entry]) => setOnScreen(entry.isIntersecting),
-      { rootMargin, threshold: 0 }
-    );
-    io.observe(host);
-    return () => io.disconnect();
-  }, [rootMargin]);
-
-  // R3F sizes itself from a ResizeObserver on its own container and skips
-  // creating the renderer entirely while that measurement reads zero. When the
-  // Canvas arrives through a Suspense reveal — which is how Stage mounts it —
-  // that first measurement can be missed and the canvas stays at the 300x150
-  // HTML default with no renderer behind it. One resize event after layout has
-  // settled makes it measure again, which is all it needs.
+  // One resize after layout settles makes R3F measure a container it may have
+  // read as zero-sized while arriving through Suspense.
   useEffect(() => {
-    let raf = 0;
-    raf = requestAnimationFrame(() => {
+    let raf = requestAnimationFrame(() => {
       raf = requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     });
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // Also stop rendering when the tab is hidden. This has to restore itself:
-  // a handler that only ever pauses leaves the scene frozen for good once the
-  // visitor switches tabs and comes back.
+  // Pausing has to undo itself: a handler that only ever pauses freezes the
+  // scene for good once someone switches tabs and comes back.
   useEffect(() => {
     const onVisibility = () => setTabActive(!document.hidden);
     document.addEventListener('visibilitychange', onVisibility);
@@ -111,47 +80,55 @@ function StageCanvas({
   }, []);
 
   const handleIncline = useCallback(
-    () => setDpr(Math.min(window.devicePixelRatio || 1, ceiling)),
-    [ceiling]
+    () => setDpr(Math.min(window.devicePixelRatio || 1, info.dprCeiling)),
+    [info.dprCeiling]
   );
   const handleDecline = useCallback(() => setDpr(1), []);
 
-  if (webgl === false) {
-    return (
-      <div ref={hostRef} className={className} aria-hidden="true">
-        {fallback}
-      </div>
-    );
-  }
-
-  const active = onScreen && tabActive;
-  const frameloop = !active ? 'never' : onDemand ? 'demand' : 'always';
+  const stage = useMemo(
+    () => ({ active: inView && tabActive, tier: info.tier, reducedMotion }),
+    [inView, tabActive, info.tier, reducedMotion]
+  );
 
   return (
-    <div ref={hostRef} className={className} role="img" aria-label={label}>
+    <div ref={hostRef} className="stage__canvas">
       <Canvas
+        key={epoch}
+        shadows={info.tier === 'low' ? false : 'percentage'}
         dpr={dpr}
-        frameloop={frameloop}
+        frameloop={nearScreen && tabActive ? 'always' : 'never'}
         camera={camera}
         gl={{
           alpha: true,
-          antialias: tier !== 'low',
+          antialias: info.tier !== 'low',
           powerPreference: 'high-performance',
           stencil: false,
-          depth: true,
         }}
         onCreated={({ gl }) => {
           gl.setClearColor(0x000000, 0);
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.05;
+          // Khronos PBR Neutral: built for product renders, it keeps gold gold
+          // instead of sliding it toward orange the way ACES does.
+          gl.toneMapping = THREE.NeutralToneMapping;
+          gl.toneMappingExposure = 1;
+
+          const el = gl.domElement;
+          el.addEventListener('webglcontextlost', (event) => {
+            event.preventDefault();
+            setLost(true);
+          });
+          el.addEventListener('webglcontextrestored', () => {
+            setLost(false);
+            setEpoch((n) => n + 1);
+          });
         }}
         style={{ width: '100%', height: '100%' }}
       >
         <PerformanceMonitor onIncline={handleIncline} onDecline={handleDecline}>
-          <Suspense fallback={null}>{children}</Suspense>
+          <StageContext.Provider value={stage}>{children}</StageContext.Provider>
         </PerformanceMonitor>
-        <AdaptiveDpr pixelated={false} />
       </Canvas>
+
+      {lost && <div className="stage__lost">{fallback}</div>}
     </div>
   );
 }

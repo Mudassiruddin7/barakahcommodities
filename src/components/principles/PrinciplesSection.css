@@ -1,115 +1,184 @@
-/* ============================================================
-   07 · Principles
-   ============================================================ */
-
-.principles {
-  background: var(--bg);
-}
-
-.principles__list {
+.principles__head {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0;
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  border-top: 1px solid var(--rule);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 5rem);
+  align-items: end;
+  margin-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
-.principles__item {
+.principles__head .head {
+  max-width: 10ch;
+}
+
+.principles__head .lead {
+  max-width: 32ch;
+  padding-bottom: 0.4rem;
+}
+
+/* Five strips, edge to edge. */
+.principles__strips {
+  display: flex;
+  height: clamp(30rem, 74svh, 42rem);
+}
+
+.strip {
   position: relative;
-  padding: var(--s6) clamp(0.85rem, 1.6vw, 1.5rem) var(--s6) 0;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  transition: flex-grow 640ms var(--ease-drawer);
 }
 
-.principles__item + .principles__item {
-  padding-left: clamp(0.85rem, 1.6vw, 1.5rem);
-  border-left: 1px solid var(--rule);
+.strip[data-open='true'] {
+  flex-grow: 5.2;
 }
 
-/* The mark draws itself in on hover — quiet, and only where a cursor exists. */
-.principles__mark {
+.strip--turmeric {
+  background: var(--turmeric);
+  color: var(--ink);
+}
+
+.strip--chilli {
+  background: var(--chilli);
+  color: var(--bone);
+}
+
+.strip--cardamom {
+  background: var(--cardamom);
+  color: var(--bone);
+}
+
+.strip--ink {
+  background: var(--ink);
+  color: var(--bone);
+}
+
+.strip--sand {
+  background: var(--bone-2);
+  color: var(--ink);
+}
+
+.strip__button {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 42px;
-  height: 42px;
-  color: var(--gold);
-  margin-bottom: var(--s5);
-  transition: color var(--t) var(--ease), transform var(--t-slow) var(--ease);
-}
-
-.principles__item:hover .principles__mark {
-  color: var(--emerald);
-  transform: rotate(45deg);
-}
-
-.principles__mark svg {
   width: 100%;
-  height: 100%;
-  overflow: visible;
+  text-align: left;
 }
 
-.principles__term {
-  font-family: var(--serif);
-  font-size: clamp(1.25rem, 1rem + 0.7vw, 1.65rem);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: var(--emerald);
-  margin-bottom: var(--s1);
+.strip__button:focus-visible {
+  outline-offset: -6px;
+  outline-color: currentColor;
 }
 
-.principles__english {
-  font-size: var(--micro);
-  letter-spacing: var(--track-widest);
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: var(--s4);
+/* Closed: the word runs up the side. */
+.strip__side {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1rem, 2vw, 1.75rem);
+  font-size: clamp(2.6rem, 1.4rem + 3.4vw, 5.2rem);
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: translateX(-50%) rotate(180deg);
+  transition: opacity 180ms ease;
 }
 
-.principles__desc {
-  font-size: var(--body-sm);
-  line-height: 1.62;
-  color: var(--text-2);
+/* Open: the word turns upright and the meaning appears. */
+.strip__title {
+  position: absolute;
+  left: clamp(1.25rem, 2.4vw, 2.25rem);
+  top: clamp(1.25rem, 2.4vw, 2.25rem);
+  right: clamp(1.25rem, 2.4vw, 2.25rem);
+  display: grid;
+  gap: 0.4rem;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.strip__term {
+  font-size: clamp(3.2rem, 1.2rem + 6vw, 8rem);
+  line-height: 0.88;
+}
+
+.strip__english {
+  font-size: var(--step-lead);
+  font-weight: 600;
+}
+
+.strip__panel {
+  position: absolute;
+  left: clamp(1.25rem, 2.4vw, 2.25rem);
+  bottom: clamp(1.25rem, 2.4vw, 2.25rem);
+  width: min(26rem, calc(100% - 2.5rem));
+  font-size: var(--step-lead);
+  line-height: 1.32;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.strip[data-open='true'] .strip__side {
+  opacity: 0;
+}
+
+.strip[data-open='true'] .strip__title,
+.strip[data-open='true'] .strip__panel {
+  opacity: 1;
+  transform: none;
+  transition: opacity 420ms var(--ease-out) 220ms, transform 420ms var(--ease-out) 220ms;
 }
 
 .principles__note {
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  max-width: 56rem;
+  margin-top: clamp(3rem, 6vw, 5rem);
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 1023px) {
-  .principles__list {
-    grid-template-columns: repeat(2, 1fr);
-    border-top: 0;
-  }
-
-  .principles__item {
-    padding: var(--s5) var(--s4) var(--s5) 0;
-    border-top: 1px solid var(--rule);
-  }
-
-  .principles__item + .principles__item {
-    padding-left: 0;
-    border-left: 0;
-  }
-
-  /* Restore the vertical rule between the two columns. */
-  .principles__item:nth-child(even) {
-    padding-left: var(--s5);
-    border-left: 1px solid var(--rule);
-  }
-
-  .principles__mark {
-    width: 34px;
-    height: 34px;
-    margin-bottom: var(--s4);
-  }
+.principles__note > * {
+  max-width: 70ch;
 }
 
-@media (max-width: 640px) {
-  .principles__list {
+.principles__note-title {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--step-lead);
+  text-transform: uppercase;
+  color: var(--chilli);
+}
+
+@media (max-width: 899px) {
+  .principles__head {
     grid-template-columns: 1fr;
   }
 
-  .principles__item:nth-child(even) {
-    padding-left: 0;
-    border-left: 0;
+  .principles__strips {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .strip {
+    flex: none;
+    min-height: 5.25rem;
+    transition: min-height 560ms var(--ease-drawer);
+  }
+
+  .strip[data-open='true'] {
+    min-height: 22rem;
+  }
+
+  .strip__side {
+    left: var(--gutter);
+    top: 50%;
+    bottom: auto;
+    writing-mode: horizontal-tb;
+    transform: translateY(-50%);
+    font-size: 2.6rem;
+  }
+
+  .strip__term {
+    font-size: clamp(3.4rem, 18vw, 5.4rem);
+  }
+
+  .strip__panel {
+    font-size: 1.125rem;
   }
 }

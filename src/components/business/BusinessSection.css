@@ -1,234 +1,162 @@
-/* ============================================================
-   01 · Business
-   ============================================================ */
-
-.business {
-  background: var(--bg-alt);
-  overflow: hidden;
+.business__intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 5rem);
+  align-items: end;
+  padding-block: var(--section-y) clamp(2rem, 5vw, 4rem);
 }
 
-.business__head {
-  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+.business__title {
+  max-width: 14ch;
 }
 
-/* ---------- Composition: display band, then panels ---------- */
-.business__composition {
-  position: relative;
+.business__intro .lead {
+  max-width: 34ch;
+  padding-bottom: 0.4rem;
 }
 
-/* The display is its own band. Keeping the 3D out from behind the copy is
-   what makes the section legible — the earlier overlay fought the text. */
-.business__display {
-  position: relative;
-  height: clamp(20rem, 34vw, 27rem);
-  background:
-    radial-gradient(90% 120% at 50% 108%, rgba(201, 163, 78, 0.16), transparent 62%),
-    linear-gradient(180deg, var(--emerald-deep) 0%, var(--forest) 100%);
-  overflow: hidden;
+/* One screen of travel per lot, plus a little to settle on the last. */
+.business__track {
+  height: 340vh;
 }
 
+.business__pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: clip;
+}
+
+/* The goods fill the right two-thirds; the words sit in the left third. */
 .business__stage {
   position: absolute;
-  inset: 0;
-  /* Fade the plinths into the band rather than cutting them at its edges. */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 12%,
-    #000 88%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 12%,
-    #000 88%,
-    transparent 100%
-  );
-}
-
-.business__stage-fallback {
-  position: absolute;
-  inset: 0;
-}
-
-.business__display-caption {
-  position: absolute;
-  left: var(--gutter);
-  bottom: var(--s5);
-  font-family: var(--serif);
-  font-size: var(--body-sm);
-  letter-spacing: var(--track-widest);
-  text-transform: uppercase;
-  color: var(--gold);
+  inset: 0 0 0 38%;
   pointer-events: none;
 }
 
-/* ---------- Panels ---------- */
-.business__panels {
+.business__fallback {
+  position: absolute;
+  inset: 0;
+}
+
+.business__copy {
+  position: relative;
+  z-index: 1;
+  padding-block: calc(var(--nav-h) + 1rem) clamp(2rem, 5vw, 4rem);
+  width: 100%;
+  pointer-events: none;
+}
+
+.business__lots {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid var(--rule);
+  max-width: min(31rem, 34vw);
 }
 
-.business__panel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: var(--s7) clamp(1rem, 2vw, 2rem) var(--s6);
-  min-height: clamp(19rem, 26vw, 23rem);
-  cursor: pointer;
-  transition: background-color var(--t-slow) var(--ease);
-  outline-offset: -3px;
-}
-
-/* Hairline dividers between panels, not around them. */
-.business__panel + .business__panel {
-  border-left: 1px solid var(--rule);
-}
-
-.business__panel.is-active {
-  background: linear-gradient(
-    180deg,
-    rgba(201, 163, 78, 0.09) 0%,
-    rgba(201, 163, 78, 0) 68%
-  );
-}
-
-/* Gold marker that grows along the top rule of the active panel. */
-.business__panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--t-slow) var(--ease);
-}
-
-.business__panel.is-active::before {
-  transform: scaleX(1);
-}
-
-.business__panel-index {
-  display: block;
-  margin-bottom: var(--s5);
-}
-
-.business__panel-name {
-  font-family: var(--serif);
-  font-size: var(--display-3);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: var(--track-tight);
-  color: var(--emerald);
-  margin-bottom: var(--s2);
-}
-
-.business__panel-summary {
-  font-size: var(--body-sm);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  color: var(--brass);
-}
-
-/* Detail is quieter until the panel is chosen, but never unreadable. */
-.business__panel-body {
-  margin-top: auto;
-  padding-top: var(--s6);
-  opacity: 0.72;
-  transition: opacity var(--t-slow) var(--ease);
-}
-
-.business__panel.is-active .business__panel-body {
-  opacity: 1;
-}
-
-.business__panel-detail {
-  font-size: var(--body);
-  line-height: 1.62;
-  color: var(--text-2);
-  margin-bottom: var(--s3);
-}
-
-.business__panel-note {
-  font-size: var(--micro);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  color: var(--text-3);
-  padding-top: var(--s3);
-  border-top: 1px solid var(--rule);
-}
-
-.business__panel-explore {
-  margin-top: var(--s5);
-  color: var(--emerald);
+.business__lot {
+  grid-area: 1 / 1;
+  align-self: end;
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+  transform: translateY(18px);
+  visibility: hidden;
+  /* Leaves fast, arrives a beat later: the page answers, then explains. */
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms;
 }
 
-.business__panel.is-active .business__panel-explore {
+.business__lot[data-active='true'] {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+  visibility: visible;
+  transition: opacity 460ms var(--ease-out) 120ms, transform 460ms var(--ease-out) 120ms,
+    visibility 0s;
 }
 
-.business__panel.is-active .business__panel-explore::after {
-  transform: scaleX(1);
-  transform-origin: left;
+.business__name {
+  font-size: clamp(3.6rem, 0.6rem + 7.4vw, 8.6rem);
 }
 
-/* ---------- Tablet ---------- */
-@media (max-width: 1023px) {
-  .business__panel {
-    min-height: 18rem;
-    padding: var(--s6) var(--s4) var(--s5);
-  }
+.business__detail {
+  margin-top: clamp(1rem, 2vw, 1.6rem);
+  font-size: var(--step-lead);
+  line-height: 1.34;
+  max-width: 30ch;
+}
 
-  .business__panel-body {
+.business__note {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.business__switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: clamp(1.75rem, 3vw, 2.75rem);
+  pointer-events: auto;
+}
+
+.business__switch button {
+  padding: 0.5rem 0;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 0.14em;
+  text-underline-offset: 0.4em;
+  opacity: 0.62;
+  transition: opacity var(--t-hover) ease, text-decoration-color var(--t-hover) ease,
+    transform var(--t-press) var(--ease-out);
+}
+
+.business__switch button:active {
+  transform: scale(0.97);
+}
+
+.business__switch button[data-active='true'] {
+  opacity: 1;
+  text-decoration-color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .business__switch button:hover {
     opacity: 1;
   }
 }
 
-/* ---------- Mobile ---------- */
-@media (max-width: 767px) {
-  .business__display {
-    height: 40svh;
-  }
-
-  .business__panels {
+@media (max-width: 899px) {
+  .business__intro {
     grid-template-columns: 1fr;
-    border-bottom: 0;
   }
 
-  .business__panel {
-    min-height: auto;
-    padding: var(--s5) 0;
+  .business__track {
+    height: 380vh;
   }
 
-  .business__panel + .business__panel {
-    border-left: 0;
-    border-top: 1px solid var(--rule);
+  .business__stage {
+    inset: var(--nav-h) 0 auto 0;
+    height: 52svh;
   }
 
-  .business__panel::before {
-    display: none;
+  .business__copy {
+    padding-block: 0 1.5rem;
   }
 
-  .business__panel.is-active {
-    background: none;
+  .business__lots {
+    max-width: none;
   }
 
-  .business__panel-body {
-    margin-top: var(--s4);
-    padding-top: 0;
+  .business__name {
+    font-size: clamp(3.2rem, 15vw, 5.4rem);
   }
 
-  .business__panel-explore {
-    display: none;
+  .business__detail {
+    font-size: 1.0625rem;
+    max-width: 34ch;
+  }
+
+  .business__switch {
+    margin-top: 1rem;
   }
 }

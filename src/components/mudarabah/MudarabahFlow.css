@@ -1,153 +1,205 @@
-/* ============================================================
-   03 · Mudarabah
-   ============================================================ */
-
-.mudarabah {
-  position: relative;
-  background: var(--emerald);
-  color: var(--text-on-dark);
-  overflow: hidden;
-}
-
-.mudarabah__geo {
-  opacity: 0.045;
-}
-
-.mudarabah .shell {
-  position: relative;
-  z-index: 1;
-}
-
-.mudarabah__flow {
-  position: relative;
-  margin-top: clamp(3rem, 6vw, 5rem);
-  padding-left: clamp(2.5rem, 6vw, 5rem);
-}
-
-/* ---------- Spine ---------- */
-.mudarabah__spine {
-  position: absolute;
-  left: 0;
-  top: 0.9rem;
-  width: 2px;
-  height: calc(100% - 2rem);
-  overflow: visible;
-}
-
-/* ---------- Steps ---------- */
-.mudarabah__steps {
+.flow__head {
   display: grid;
-  gap: clamp(2.25rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 5rem);
+  align-items: end;
+  margin-bottom: clamp(3rem, 7vw, 6rem);
 }
 
-.mudarabah__step {
-  position: relative;
+.flow__head .head {
+  max-width: 11ch;
 }
 
-.mudarabah__marker {
-  position: absolute;
-  left: calc(clamp(2.5rem, 6vw, 5rem) * -1);
-  top: 0.6rem;
-  width: 9px;
-  height: 9px;
-  transform: translateX(-4px) rotate(45deg);
-  background: var(--emerald);
-  border: 1px solid var(--gold);
-  transition: background-color var(--t) var(--ease);
+.flow__head .lead {
+  max-width: 34ch;
+  padding-bottom: 0.4rem;
 }
 
-.mudarabah__step-body {
-  max-width: 46rem;
+.flow__diagram {
+  --bar: 6px;
+  --draw: 900ms;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
 }
 
-.mudarabah__role {
-  font-size: var(--micro);
-  letter-spacing: var(--track-widest);
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: var(--s2);
+.flow__pair {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
 }
 
-.mudarabah__term {
-  font-family: var(--serif);
-  font-size: clamp(1.55rem, 1.1rem + 1.6vw, 2.3rem);
-  font-weight: 400;
-  line-height: 1.14;
-  letter-spacing: var(--track-tight);
-  color: var(--ivory);
-  margin-bottom: var(--s3);
-}
-
-.mudarabah__desc {
-  font-size: var(--body-lg);
-  font-weight: 300;
-  line-height: 1.62;
-  color: var(--text-on-dark-2);
-  max-width: 40rem;
-}
-
-/* ---------- The fork: profit or loss, shown evenly ---------- */
-.mudarabah__outcomes {
+.flow__node {
   display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.flow__term {
+  font-size: clamp(2.4rem, 1.2rem + 3.6vw, 4.8rem);
+}
+
+.flow__role {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.flow__desc {
+  max-width: 36ch;
+}
+
+.flow__node--capital {
+  grid-column: 1 / 6;
+}
+
+.flow__node--manager {
+  grid-column: 8 / 13;
+}
+
+.flow__node--trading {
+  grid-column: 4 / 10;
+  text-align: center;
   align-items: center;
-  gap: var(--s4);
-  margin-top: var(--s5);
 }
 
-.mudarabah__outcome {
-  font-size: var(--body-sm);
-  font-weight: 500;
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  padding: 0.55rem 1.15rem;
-  border: 1px solid;
+.flow__node--result {
+  grid-column: 3 / 11;
+  align-items: center;
+  text-align: center;
 }
 
-.mudarabah__outcome--profit {
-  color: var(--champagne);
-  border-color: rgba(232, 214, 164, 0.45);
+.flow__node--sharing {
+  grid-column: 1 / 7;
 }
 
-.mudarabah__outcome--loss {
-  color: rgba(247, 243, 232, 0.72);
-  border-color: var(--rule-dark-strong);
-  border-style: dashed;
+/* Connectors: thick bars, drawn in once the diagram is seen. */
+.flow__join,
+.flow__stem {
+  position: relative;
+  grid-column: 1 / -1;
+  height: clamp(2.5rem, 5vw, 4.5rem);
+  margin-block: 0.75rem;
 }
 
-.mudarabah__outcome-or {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: var(--body);
-  color: var(--text-on-dark-3);
+.flow__join::before {
+  content: '';
+  position: absolute;
+  left: calc((100% + var(--gutter)) * 2.5 / 12 - var(--gutter) / 2);
+  right: calc((100% + var(--gutter)) * 2.5 / 12 - var(--gutter) / 2);
+  top: 0;
+  bottom: 50%;
+  border: var(--bar) solid var(--fg);
+  border-top: 0;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path var(--draw) var(--ease-in-out) 100ms;
 }
 
-/* ---------- Footnote ---------- */
-.mudarabah__foot {
-  margin-top: clamp(3rem, 5vw, 4.5rem);
-  padding-top: var(--s5);
-  border-top: 1px solid var(--rule-dark);
-  font-size: var(--body-sm);
-  line-height: 1.62;
-  color: var(--text-on-dark-2);
-  max-width: 44rem;
+.flow__join::after,
+.flow__stem::before {
+  content: '';
+  position: absolute;
+  left: calc(50% - var(--bar) / 2);
+  width: var(--bar);
+  background: var(--fg);
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 520ms var(--ease-in-out) 700ms;
 }
 
-/* ---------- Mobile ---------- */
-@media (max-width: 767px) {
-  .mudarabah__flow {
-    padding-left: var(--s6);
+.flow__join::after {
+  top: 50%;
+  bottom: 0;
+}
+
+.flow__stem::before {
+  top: 0;
+  bottom: 0;
+  transition-delay: 200ms;
+}
+
+.flow__diagram[data-in='true'] .flow__join::before {
+  clip-path: inset(0);
+}
+
+.flow__diagram[data-in='true'] .flow__join::after,
+.flow__diagram[data-in='true'] .flow__stem::before {
+  clip-path: inset(0);
+}
+
+/* Profit or loss, with equal weight: two blocks the same size. */
+.flow__outcomes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--bar);
+  width: min(100%, 36rem);
+  margin-top: 1.25rem;
+}
+
+.flow__outcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: clamp(8rem, 14vw, 11rem);
+  padding: 1.25rem 1rem;
+}
+
+.flow__outcome .display {
+  font-size: clamp(2.6rem, 1.4rem + 3.4vw, 4.6rem);
+}
+
+.flow__outcome--profit {
+  background: var(--bone);
+  color: var(--ink);
+}
+
+.flow__outcome--loss {
+  background: var(--ink);
+  color: var(--bone);
+}
+
+.flow__equal {
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+@media (max-width: 899px) {
+  .flow__head {
+    grid-template-columns: 1fr;
   }
 
-  .mudarabah__marker {
-    left: calc(var(--s6) * -1);
+  .flow__diagram {
+    display: flex;
+    flex-direction: column;
   }
 
-  .mudarabah__outcomes {
-    gap: var(--s3);
+  .flow__pair {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
   }
 
-  .mudarabah__outcome {
-    padding: 0.45rem 0.9rem;
-    font-size: var(--micro);
+  .flow__node--trading,
+  .flow__node--result {
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  /* One bar down the left instead of a join. */
+  .flow__join {
+    display: none;
+  }
+
+  .flow__stem {
+    height: 3rem;
+    margin-block: 1rem;
+  }
+
+  .flow__pair + .flow__join + .flow__node {
+    margin-top: 2.5rem;
+  }
+
+  .flow__stem::before {
+    left: 0;
   }
 }

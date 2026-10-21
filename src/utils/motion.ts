@@ -1,139 +1,59 @@
 // ============================================================
-// Motion — one easing curve, one set of variants, one GSAP helper.
+// Motion — one place that registers the GSAP plugins and decides
+// how this site moves.
 //
-// Framer Motion owns discrete UI transitions (reveals, hovers,
-// menus). GSAP ScrollTrigger owns scroll-linked storytelling.
-// Nothing is animated by both.
+// The house easing is a strong exponential ease-out: movement starts
+// fast and settles late, so the page answers a scroll or a click the
+// instant it happens. Nothing ever eases in. UI feedback is CSS;
+// scroll-linked storytelling is GSAP ScrollTrigger; the 3D has its own
+// loop. No element is animated by two of them at once.
 // ============================================================
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import type { Variants } from 'framer-motion';
+import { SplitText } from 'gsap/SplitText';
+import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
+import { CustomEase } from 'gsap/CustomEase';
+import { CustomBounce } from 'gsap/CustomBounce';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin, CustomEase, CustomBounce);
 
-/** The single easing curve the whole site moves on. */
-export const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-export const GSAP_EASE = 'power3.out';
+/** Same curve as --ease-out in the stylesheet. */
+export const EASE_OUT = CustomEase.create('barakah-out', '0.23, 1, 0.32, 1');
 
-export const DURATION = {
-  fast: 0.24,
-  base: 0.52,
-  slow: 0.78,
-  cinematic: 1.25,
-} as const;
-
-// ---------- Framer variants ----------
-
-export const riseIn: Variants = {
-  hidden: { opacity: 0, y: 22 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: DURATION.slow, ease: EASE },
-  },
-};
-
-export const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: DURATION.base, ease: EASE } },
-};
-
-export const maskUp: Variants = {
-  hidden: { y: '110%' },
-  show: { y: '0%', transition: { duration: 0.9, ease: EASE } },
-};
-
-export const stagger = (each = 0.08, delay = 0): Variants => ({
-  hidden: {},
-  show: { transition: { staggerChildren: each, delayChildren: delay } },
+/** A rubber stamp coming down: lands hard, rebounds a hair, rests. */
+export const EASE_STAMP = CustomBounce.create('barakah-stamp', {
+  strength: 0.28,
+  squash: 0,
+  endAtStart: false,
 });
 
-/** Standard viewport config: fire once, slightly before fully in view. */
-export const VIEWPORT = { once: true, margin: '-12% 0px -12% 0px' } as const;
+export { gsap, ScrollTrigger, SplitText };
 
-// ---------- GSAP ----------
-
-interface ScrollRevealOptions {
-  trigger: Element;
-  start?: string;
-  y?: number;
-  stagger?: number;
-  duration?: number;
-}
+export const prefersReducedMotion = (): boolean =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * Reveals a set of elements as their section enters view.
- * Returns a disposer that kills the tween and its ScrollTrigger.
+ * Lines of a heading slide up out of a mask, one after another. The text is
+ * already in the DOM and fully visible if this never runs.
  */
-export function scrollReveal(
-  targets: Element[] | NodeListOf<Element>,
-  { trigger, start = 'top 78%', y = 26, stagger: each = 0.09, duration = 0.8 }: ScrollRevealOptions
-): () => void {
-  const list = Array.from(targets);
-  if (!list.length) return () => {};
+export function revealLines(el: Element, options: { delay?: number; start?: string } = {}): () => void {
+  if (prefersReducedMotion()) return () => {};
 
-  const tween = gsap.from(list, {
-    y,
-    opacity: 0,
-    duration,
-    stagger: each,
-    ease: GSAP_EASE,
-    scrollTrigger: { trigger, start, toggleActions: 'play none none none' },
+  const split = SplitText.create(el as HTMLElement, {
+    type: 'lines',
+    mask: 'lines',
+    autoSplit: true,
+    onSplit: (self) =>
+      gsap.from(self.lines, {
+        yPercent: 108,
+        duration: 0.95,
+        ease: EASE_OUT,
+        stagger: 0.075,
+        delay: options.delay ?? 0,
+        scrollTrigger: { trigger: el, start: options.start ?? 'top 88%', once: true },
+      }),
   });
 
-  return () => {
-    tween.scrollTrigger?.kill();
-    tween.kill();
-    gsap.set(list, { clearProps: 'all' });
-  };
+  return () => split.revert();
 }
-
-/**
- * Draws an SVG path as its section scrolls through the viewport.
- * `scrub` ties the draw to scroll position rather than to a clock.
- */
-export function drawPath(
-  path: SVGPathElement | SVGLineElement,
-  { trigger, start = 'top 72%', end = 'bottom 60%' }: { trigger: Element; start?: string; end?: string }
-): () => void {
-  const length = path.getTotalLength();
-  gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
-
-  const tween = gsap.to(path, {
-    strokeDashoffset: 0,
-    ease: 'none',
-    scrollTrigger: { trigger, start, end, scrub: 0.6 },
-  });
-
-  return () => {
-    tween.scrollTrigger?.kill();
-    tween.kill();
-  };
-}
-
-/** Counts a number up when its element enters view. */
-export function countUp(
-  el: HTMLElement,
-  value: number,
-  { trigger, format }: { trigger: Element; format: (n: number) => string }
-): () => void {
-  const proxy = { n: 0 };
-
-  const tween = gsap.to(proxy, {
-    n: value,
-    duration: DURATION.cinematic,
-    ease: 'power2.out',
-    onUpdate: () => {
-      el.textContent = format(Math.round(proxy.n));
-    },
-    scrollTrigger: { trigger, start: 'top 80%', toggleActions: 'play none none none' },
-  });
-
-  return () => {
-    tween.scrollTrigger?.kill();
-    tween.kill();
-  };
-}
-
-export { gsap, ScrollTrigger };

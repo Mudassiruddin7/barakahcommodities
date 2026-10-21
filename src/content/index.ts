@@ -1,9 +1,10 @@
 // ============================================================
 // Content — every string on the page lives here.
 //
-// The wording around profit, risk and Shariah status is
+// The wording around profit, returns, risk and Shariah status is
 // deliberate. Nothing here asserts a guaranteed return, a
-// certification, or a regulatory approval.
+// certification, or a regulatory approval. The calculator shows a
+// target, labelled as one, with the risk stated beside it.
 // ============================================================
 
 export interface NavLink {
@@ -16,44 +17,41 @@ export const CONTACT = {
   role: 'Business Manager',
   phone: '+91 9059804335',
   phoneHref: 'tel:+919059804335',
+  /** International format, digits only — what wa.me expects. */
+  whatsapp: '919059804335',
 } as const;
 
 export const BRAND = {
   name: 'Barakah Commodities',
   logoTop: 'BARAKAH',
   logoBottom: 'COMMODITIES',
+  arabic: 'بركة',
   tagline: 'Trust · Transparency · Barakah',
   descriptor: 'Halal Commodity Trading & Ethical Business Partnerships',
 } as const;
 
 export const NAV_LINKS: NavLink[] = [
-  { label: 'Business', href: '#business' },
-  { label: 'Mudarabah', href: '#mudarabah' },
-  { label: 'Transparency', href: '#transparency' },
-  { label: 'Principles', href: '#principles' },
+  { label: 'What we trade', href: '#business' },
+  { label: 'Partnership', href: '#mudarabah' },
+  { label: 'Records', href: '#transparency' },
   { label: 'Contact', href: '#contact' },
 ];
 
+export const NAV_ACTION: NavLink = { label: 'Calculator', href: '#returns' };
+
 // ---------- Hero ----------
 export const HERO = {
-  eyebrow: 'Barakah Commodities',
   headline: ['Real commodities.', 'Real business.', 'Real barakah.'],
   lede: 'Halal commodity trading built on trust, transparency and responsible profit-sharing partnerships.',
-  primaryCta: 'Explore our business',
-  secondaryCta: 'Understand Mudarabah',
+  primaryCta: 'Run the numbers',
+  secondaryCta: 'How the partnership works',
+  /** The rubber stamp on the still life. Words describing what the process does. */
+  stamp: ['WEIGHED', 'RECORDED', 'SETTLED'],
 } as const;
-
-export const COMMODITY_STRIP = [
-  'Spices',
-  'Dry Fruits',
-  'Physical Gold',
-  'Commodity Trading',
-] as const;
 
 // ---------- 01 · Business ----------
 export interface Commodity {
-  id: string;
-  index: string;
+  id: 'spices' | 'dry-fruits' | 'gold';
   name: string;
   summary: string;
   detail: string;
@@ -61,7 +59,6 @@ export interface Commodity {
 }
 
 export const BUSINESS = {
-  eyebrow: 'What we trade',
   title: 'We trade what people actually use.',
   lede: 'Barakah Commodities focuses on tangible commodities and real-world trading activity rather than speculative digital assets or artificial financial products.',
 } as const;
@@ -69,7 +66,6 @@ export const BUSINESS = {
 export const COMMODITIES: Commodity[] = [
   {
     id: 'spices',
-    index: '01',
     name: 'Spices',
     summary: 'Premium spice trading',
     detail:
@@ -78,8 +74,7 @@ export const COMMODITIES: Commodity[] = [
   },
   {
     id: 'dry-fruits',
-    index: '02',
-    name: 'Dry Fruits',
+    name: 'Dry fruits',
     summary: 'Wholesale commodity trading',
     detail:
       'Almonds, dates, pistachios and walnuts procured directly and distributed through wholesale channels.',
@@ -87,25 +82,24 @@ export const COMMODITIES: Commodity[] = [
   },
   {
     id: 'gold',
-    index: '03',
-    name: 'Physical Gold',
+    name: 'Physical gold',
     summary: 'Physical, allocated metal',
     detail:
-      'Physical gold trading subject to applicable Shariah requirements and Indian law. Metal is real, allocated and held — never a paper position.',
+      'Physical gold trading subject to applicable Shariah requirements and Indian law. Metal is real, allocated and held, never a paper position.',
     note: 'Spot settlement, physical delivery',
   },
 ];
 
-// ---------- 02 · The commodity table ----------
+// ---------- 02 · The consignment ----------
 export interface ProcessStage {
   id: string;
-  index: string;
   label: string;
+  /** Past tense — what the rubber stamp on this line says. */
+  stamp: string;
   description: string;
 }
 
 export const PROCESS = {
-  eyebrow: 'The commodity table',
   title: 'From purchase to settlement.',
   lede: 'Every consignment moves through the same six stages, and each one leaves a record behind it.',
 } as const;
@@ -113,43 +107,41 @@ export const PROCESS = {
 export const PROCESS_STAGES: ProcessStage[] = [
   {
     id: 'source',
-    index: '01',
     label: 'Source',
+    stamp: 'Sourced',
     description:
       'Suppliers are identified and quality is assessed before any capital is committed.',
   },
   {
     id: 'purchase',
-    index: '02',
     label: 'Purchase',
-    description:
-      'Goods are bought at agreed prices against invoices and weighed on receipt.',
+    stamp: 'Weighed',
+    description: 'Goods are bought at agreed prices against invoices and weighed on receipt.',
   },
   {
     id: 'storage',
-    index: '03',
     label: 'Storage',
+    stamp: 'Stored',
     description:
       'Stock is held in conditions that preserve grade, with inventory counted and recorded.',
   },
   {
     id: 'trade',
-    index: '04',
     label: 'Trade',
-    description:
-      'Commodities are sold through established wholesale and retail market channels.',
+    stamp: 'Sold',
+    description: 'Commodities are sold through established wholesale and retail market channels.',
   },
   {
     id: 'accounting',
-    index: '05',
     label: 'Accounting',
+    stamp: 'Entered',
     description:
       'Purchases, sales and direct expenses are entered as they happen, not reconstructed later.',
   },
   {
     id: 'settlement',
-    index: '06',
     label: 'Settlement',
+    stamp: 'Settled',
     description:
       'The business result is calculated and distributed strictly per the executed agreement.',
   },
@@ -164,9 +156,9 @@ export interface MudarabahStep {
 }
 
 export const MUDARABAH = {
-  eyebrow: 'The partnership',
   title: 'Partnership, not a promise.',
   lede: 'Mudarabah is a profit-sharing partnership in which one party provides capital and the other provides management and expertise.',
+  resultNote: 'Profit and loss carry equal weight. A genuine loss is a possible result.',
 } as const;
 
 export const MUDARABAH_STEPS: MudarabahStep[] = [
@@ -188,7 +180,7 @@ export const MUDARABAH_STEPS: MudarabahStep[] = [
     term: 'Real commodity trading',
     role: 'The activity',
     description:
-      'Capital is deployed into spices, dry fruits and physical gold — goods that are bought, held and sold.',
+      'Capital is deployed into spices, dry fruits and physical gold: goods that are bought, held and sold.',
   },
   {
     id: 'result',
@@ -201,19 +193,44 @@ export const MUDARABAH_STEPS: MudarabahStep[] = [
     id: 'sharing',
     term: 'Agreed profit sharing',
     role: 'The distribution',
-    description:
-      'Any profit is divided according to the ratio set out in the executed agreement.',
+    description: 'Any profit is divided according to the ratio set out in the executed agreement.',
   },
 ];
 
-// ---------- 04 · Profit model ----------
+// ---------- 04 · The calculator ----------
+export const RETURNS = {
+  title: 'Run the numbers.',
+  lede: 'Choose an amount up to ₹5,00,000. This is what a four-month cycle is targeted to return, month by month.',
+  min: 25_000,
+  max: 500_000,
+  step: 5_000,
+  initial: 100_000,
+  presets: [100_000, 200_000, 300_000, 500_000],
+  tenureMonths: 4,
+  /** Target monthly return on capital, as a range. */
+  monthlyLow: 0.07,
+  monthlyHigh: 0.08,
+  labels: {
+    amount: 'Amount you put in',
+    cycle: 'Four-month cycle',
+    monthly: 'Each month, targeted',
+    total: 'Over four months',
+    closing: 'At the end of month four',
+    closingNote: 'Capital plus returns, if the target is met every month.',
+  },
+  disclaimerLabel: 'A target, not a promise',
+  disclaimerBody:
+    'In a Mudarabah partnership, profit is shared from what the trading actually earns. A cycle can return less than the target, or lose money, and your capital is at risk. These figures assume the target is met in every month.',
+  ctaLabel: 'Talk to us about',
+} as const;
+
+// ---------- 05 · Profit model ----------
 export const PROFIT = {
-  eyebrow: 'Profit model',
   title: 'How profit is calculated.',
   lede: 'Profit is what remains after the cost of goods and the direct expenses of running the trade. It is arithmetic, not a projection.',
-  disclaimerLabel: 'Illustration only — not a guaranteed return',
+  disclaimerLabel: 'Illustration only, not a guaranteed return',
   disclaimerBody:
-    'The figures below are a worked example chosen to show the method. Actual profit depends on actual business performance, and a genuine business loss is possible.',
+    'The figures above are a worked example chosen to show the method, using the same lot as the records further down. Actual profit depends on actual business performance, and a genuine business loss is possible.',
 } as const;
 
 export interface ProfitLine {
@@ -244,7 +261,7 @@ export const PROFIT_LINES: ProfitLine[] = [
   {
     id: 'expenses',
     label: 'Direct business expenses',
-    amount: 40000,
+    amount: 20000,
     operator: 'less',
     kind: 'debit',
     hint: 'Transport, storage and other costs of the trade',
@@ -252,7 +269,7 @@ export const PROFIT_LINES: ProfitLine[] = [
   {
     id: 'net',
     label: 'Net business profit',
-    amount: 30000,
+    amount: 50000,
     operator: 'equals',
     kind: 'result',
     hint: 'What the business actually earned',
@@ -260,16 +277,16 @@ export const PROFIT_LINES: ProfitLine[] = [
 ];
 
 export const PROFIT_SPLIT = {
-  net: 30000,
+  net: 50000,
   investorRatio: 70,
   managerRatio: 30,
-  investorShare: 21000,
-  managerShare: 9000,
+  investorShare: 35000,
+  managerShare: 15000,
   investorLabel: 'Investor · Rab-ul-Mal',
   managerLabel: 'Manager · Mudarib',
 } as const;
 
-// ---------- 05 · Transparency ----------
+// ---------- 06 · Transparency ----------
 export interface LedgerRow {
   id: string;
   date: string;
@@ -280,7 +297,6 @@ export interface LedgerRow {
 }
 
 export const TRANSPARENCY = {
-  eyebrow: 'Transparency',
   title: 'Every rupee should have a record.',
   lede: 'A commodity business is only as trustworthy as its books. Purchases, sales and expenses are entered as they occur.',
   dataLabel: 'Demonstration data',
@@ -293,7 +309,7 @@ export const LEDGER_ROWS: LedgerRow[] = [
   {
     id: 'r1',
     date: '04 Apr',
-    particulars: 'Purchase — turmeric, 12 qtl',
+    particulars: 'Purchase: turmeric, 12 qtl',
     reference: 'INV-0418',
     amount: 240000,
     kind: 'debit',
@@ -301,7 +317,7 @@ export const LEDGER_ROWS: LedgerRow[] = [
   {
     id: 'r2',
     date: '09 Apr',
-    particulars: 'Transport — mandi to godown',
+    particulars: 'Transport: mandi to godown',
     reference: 'EXP-0092',
     amount: 8000,
     kind: 'debit',
@@ -309,7 +325,7 @@ export const LEDGER_ROWS: LedgerRow[] = [
   {
     id: 'r3',
     date: '11 Apr',
-    particulars: 'Storage — godown, one month',
+    particulars: 'Storage: godown, one month',
     reference: 'EXP-0097',
     amount: 5000,
     kind: 'debit',
@@ -325,7 +341,7 @@ export const LEDGER_ROWS: LedgerRow[] = [
   {
     id: 'r5',
     date: '28 Apr',
-    particulars: 'Sales — wholesale lot',
+    particulars: 'Sales: wholesale lot',
     reference: 'SAL-0231',
     amount: 310000,
     kind: 'credit',
@@ -349,11 +365,11 @@ export const RECORD_TYPES = [
   { id: 'reporting', label: 'Investor reporting', detail: 'Statements per the agreement' },
 ];
 
-// ---------- 06 · Risk ----------
+// ---------- 07 · Risk ----------
 export const RISK = {
-  eyebrow: 'Risk',
   title: 'Real business means real risk.',
   lede: 'Commodity trading carries genuine commercial risk. Stating it plainly is part of doing it honestly.',
+  pans: { gold: 'Profit', iron: 'Loss' },
 } as const;
 
 export const RISK_POINTS = [
@@ -385,7 +401,7 @@ export const RISK_STATEMENTS = [
   'Capital is subject to genuine business risk.',
 ];
 
-// ---------- 07 · Principles ----------
+// ---------- 08 · Principles ----------
 export interface Principle {
   id: string;
   term: string;
@@ -394,9 +410,9 @@ export interface Principle {
 }
 
 export const PRINCIPLES_SECTION = {
-  eyebrow: 'Islamic business principles',
   title: 'Built around amanah.',
   lede: 'Five commitments that shape how the business is run, priced and reported.',
+  disclaimerLabel: 'Status of the structure',
   disclaimer:
     'Our proposed partnership structure is intended to follow the principles of Mudarabah. Final agreements and operations should be reviewed by qualified legal and Shariah professionals.',
 } as const;
@@ -425,39 +441,36 @@ export const PRINCIPLES: Principle[] = [
   },
   {
     id: 'no-riba',
-    term: 'No Riba',
+    term: 'No riba',
     english: 'No interest-based returns',
     description:
-      'Returns arise from trading real goods at a profit — never from lending money at a fixed rate of interest.',
+      'Returns arise from trading real goods at a profit, never from lending money at a fixed rate of interest.',
   },
   {
     id: 'halal-trade',
-    term: 'Halal Trade',
+    term: 'Halal trade',
     english: 'Permissible business activity',
     description:
       'Only permissible commodities, bought and sold through legitimate commercial channels.',
   },
 ];
 
-// ---------- 08 · Trust ----------
+// ---------- 09 · Trust ----------
 export const TRUST = {
-  eyebrow: 'Why work with us',
   title: 'Built on three things.',
+  speakTo: 'Speak to',
   pillars: [
     {
-      index: '01',
       title: 'Transparent records',
       detail:
         'Every purchase, sale and expense is documented and available for review by the partner whose capital is at work.',
     },
     {
-      index: '02',
       title: 'Responsible management',
       detail:
         'Positions are sized to what the business can carry. Preserving capital comes before chasing a larger result.',
     },
     {
-      index: '03',
       title: 'Long-term relationships',
       detail:
         'The intent is repeat partnership over years, which only holds if each cycle is reported honestly.',
@@ -465,27 +478,21 @@ export const TRUST = {
   ],
 } as const;
 
-// ---------- 09 · Closing ----------
+// ---------- 10 · Closing ----------
 export const CLOSING = {
-  eyebrow: 'Next step',
   headline: ['Trade with trust.', 'Grow with barakah.'],
   lede: 'Explore a more transparent approach to halal commodity trading and ethical business partnerships.',
   primaryCta: 'Talk to Barakah Commodities',
-  secondaryCta: 'View partnership model',
+  secondaryCta: 'Run the numbers',
 } as const;
 
 // ---------- Footer / legal ----------
 export const FOOTER_LINKS = {
-  navigate: NAV_LINKS,
-  legal: [
-    { label: 'Privacy Policy', href: '#legal-privacy' },
-    { label: 'Terms', href: '#legal-terms' },
-    { label: 'Risk Disclosure', href: '#risk' },
-  ] as NavLink[],
+  navigate: [...NAV_LINKS, NAV_ACTION] as NavLink[],
+  legal: [{ label: 'Risk disclosure', href: '#risk' }] as NavLink[],
 };
 
 export const LEGAL_NOTE =
   'Barakah Commodities is a commodity trading business. Any partnership arrangement is subject to applicable laws, regulations and the executed agreement.';
 
-export const formatINR = (value: number): string =>
-  `₹${value.toLocaleString('en-IN')}`;
+export const formatINR = (value: number): string => `₹${value.toLocaleString('en-IN')}`;

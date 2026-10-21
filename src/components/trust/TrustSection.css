@@ -1,116 +1,62 @@
-/* ============================================================
-   08 · Trust
-   ============================================================ */
-
 .trust__grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(2.5rem, 6vw, 5.5rem);
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2.5rem, 6vw, 7rem);
   align-items: start;
 }
 
-/* ---------- Contact card ---------- */
-.trust__card {
-  margin-top: clamp(2rem, 4vw, 3rem);
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  background: var(--emerald);
-  color: var(--ivory);
-  border-left: 2px solid var(--gold);
+.trust__who .head {
+  max-width: 8ch;
 }
 
-.trust__card-eyebrow {
-  font-size: var(--micro);
-  letter-spacing: var(--track-widest);
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: var(--s4);
+.trust__person {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.trust__card-name {
-  font-family: var(--serif);
-  font-size: clamp(1.4rem, 1.1rem + 0.9vw, 1.9rem);
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--ivory);
-  margin-bottom: var(--s1);
+.trust__speak {
+  font-weight: 600;
+  color: var(--accent);
 }
 
-.trust__card-role {
-  font-size: var(--body-sm);
-  color: var(--text-on-dark-2);
-  margin-bottom: var(--s5);
+.trust__name {
+  margin-top: 0.4rem;
+  font-size: clamp(2.2rem, 1.2rem + 2.8vw, 3.6rem);
+  line-height: 0.95;
 }
 
-.trust__card-phone {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s3);
-  font-family: var(--serif);
-  font-size: var(--title);
-  letter-spacing: 0.02em;
-  color: var(--champagne);
-  padding-bottom: 3px;
-  border-bottom: 1px solid rgba(232, 214, 164, 0.35);
-  transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
+.trust__role {
+  margin-top: 0.5rem;
+  color: var(--muted);
 }
 
-.trust__card-phone svg {
-  transition: transform var(--t) var(--ease);
+.trust__phone {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-size: var(--step-lead);
+  font-weight: 600;
 }
 
-.trust__card-phone:hover,
-.trust__card-phone:focus-visible {
-  color: var(--gold);
-  border-color: var(--gold);
-}
-
-.trust__card-phone:hover svg {
-  transform: translateX(3px);
-}
-
-/* ---------- Pillars ---------- */
 .trust__pillars {
-  border-top: 1px solid var(--rule);
-}
-
-.trust__pillar {
   display: grid;
-  grid-template-columns: 3.5rem 1fr;
-  gap: var(--s4);
-  padding-block: clamp(1.5rem, 3vw, 2.25rem);
-  border-bottom: 1px solid var(--rule);
+  gap: clamp(2.25rem, 5vw, 4rem);
+  counter-reset: pillar;
 }
 
-.trust__pillar-index {
-  padding-top: 0.35rem;
+.trust__pillars h3 {
+  font-size: clamp(2.4rem, 1.2rem + 3.4vw, 4.8rem);
+  line-height: 0.92;
 }
 
-.trust__pillar-title {
-  font-family: var(--serif);
-  font-size: clamp(1.3rem, 1.05rem + 0.8vw, 1.8rem);
-  font-weight: 400;
-  letter-spacing: var(--track-tight);
-  color: var(--emerald);
-  margin-bottom: var(--s2);
+.trust__pillars p {
+  margin-top: 0.75rem;
+  max-width: 44ch;
+  font-size: var(--step-lead);
+  line-height: 1.34;
 }
 
-.trust__pillar-detail {
-  font-size: var(--body);
-  line-height: 1.64;
-  color: var(--text-2);
-  max-width: 38rem;
-}
-
-/* ---------- Responsive ---------- */
-@media (max-width: 1023px) {
+@media (max-width: 899px) {
   .trust__grid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 767px) {
-  .trust__pillar {
-    grid-template-columns: 2.5rem 1fr;
-    gap: var(--s3);
   }
 }

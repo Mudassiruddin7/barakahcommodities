@@ -8,7 +8,7 @@ export default defineConfig({
     cssTarget: 'chrome111',
     // The 3D stack is large but entirely deferred; the warning would
     // only ever fire for that chunk, which is by design.
-    chunkSizeWarningLimit: 900,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id: string) {
@@ -24,8 +24,7 @@ export default defineConfig({
             return 'three';
           }
 
-          if (id.includes('/gsap/')) return 'gsap';
-          if (id.includes('framer-motion') || id.includes('/motion-dom/')) return 'motion';
+          if (id.includes('/gsap/') || id.includes('@gsap') || id.includes('/lenis/')) return 'motion';
           if (id.includes('/react-dom/') || id.includes('/react/') || id.includes('/scheduler/')) {
             return 'react';
           }

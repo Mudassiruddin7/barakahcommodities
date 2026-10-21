@@ -1,112 +1,112 @@
 /* ============================================================
-   BARAKAH COMMODITIES — Design System
-   A restrained editorial system: parchment, emerald, gold.
-   ============================================================ */
+   BARAKAH COMMODITIES — design system
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+   The look is taken from the trade itself: the stencilled marks
+   on jute sacks, the plain gothic of invoices and ledgers, the
+   flat colours of the things being sold. Turmeric, chilli,
+   cardamom, bone paper and black ink — nothing else.
+
+   Rules the rest of the stylesheet follows:
+   · Every section is one flat "field". It sets --bg, --fg,
+     --muted and --accent; components only ever read those.
+   · No gradients, no glows, no resting shadows. Surfaces are
+     told apart by a step in tone.
+   · Square corners everywhere. Decided once.
+   · Five type sizes, far apart.
+   ============================================================ */
 
 /* ---------- Tokens ---------- */
 :root {
-  /* Brand core */
-  --emerald: #063B2A;
-  --emerald-lift: #0A4E36;
-  --emerald-deep: #04301F;
-  --forest: #031F17;
-  --ink-green: #021410;
+  /* Materials */
+  --bone: #e6e3da;
+  --bone-2: #dad6ca; /* one step below bone */
+  --paper: #f1efe8; /* a slip laid on bone */
+  --ink: #14120e;
+  --ink-2: #25221c; /* one step above ink */
+  --turmeric: #eda600;
+  --turmeric-2: #f6bf33; /* a step lighter, for hover */
+  --chilli: #a3281c;
+  --cardamom: #1f3b2d;
 
-  --gold: #C9A34E;
-  --gold-soft: #D9BC77;
-  --brass: #A8863C;
-  --champagne: #E8D6A4;
-
-  /* Neutrals — warm, paper-like */
-  --parchment: #FBF8F0;
-  --ivory: #F7F3E8;
-  --sand: #EFE9DA;
-  --stone: #DED6C4;
-  --charcoal: #161814;
-
-  --rgb-emerald: 6, 59, 42;
-  --rgb-forest: 3, 31, 23;
-  --rgb-gold: 201, 163, 78;
-  --rgb-champagne: 232, 214, 164;
-  --rgb-ivory: 247, 243, 232;
-  --rgb-charcoal: 22, 24, 20;
-
-  /* Semantic */
-  --bg: var(--parchment);
-  --bg-alt: var(--ivory);
-  --bg-sand: var(--sand);
-  --bg-dark: var(--forest);
-  --bg-emerald: var(--emerald);
-
-  --text: #14170F;
-  --text-2: #4E5348;
-  --text-3: #7C8175;
-  --text-on-dark: var(--ivory);
-  --text-on-dark-2: rgba(247, 243, 232, 0.62);
-  --text-on-dark-3: rgba(247, 243, 232, 0.40);
-
-  --rule: rgba(22, 24, 20, 0.13);
-  --rule-strong: rgba(22, 24, 20, 0.24);
-  --rule-dark: rgba(247, 243, 232, 0.14);
-  --rule-dark-strong: rgba(247, 243, 232, 0.28);
+  /* Field defaults — overwritten by .field--* */
+  --bg: var(--bone);
+  --fg: var(--ink);
+  --muted: #4a463e;
+  --accent: var(--chilli);
+  --surface: var(--bone-2);
 
   /* Type */
-  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Big Shoulders Stencil', 'Arial Narrow', 'Roboto Condensed', Impact, sans-serif;
+  --font-text: 'Libre Franklin', 'Franklin Gothic Medium', 'Helvetica Neue', Arial, sans-serif;
+  --font-arabic: 'Reem Kufi', 'Noto Kufi Arabic', 'Segoe UI', sans-serif;
 
-  /* Fluid display sizes — elegant, not gigantic */
-  --display-1: clamp(2.6rem, 1.6rem + 3.6vw, 5.1rem);
-  --display-2: clamp(2.1rem, 1.4rem + 2.6vw, 3.9rem);
-  --display-3: clamp(1.65rem, 1.25rem + 1.5vw, 2.5rem);
-  --title: clamp(1.15rem, 1rem + 0.5vw, 1.5rem);
+  --step-small: 0.875rem;
+  --step-body: clamp(1.0625rem, 1.01rem + 0.22vw, 1.1875rem);
+  --step-lead: clamp(1.3125rem, 1.1rem + 0.9vw, 1.75rem);
+  --step-head: clamp(2.5rem, 0.9rem + 4.6vw, 5.8rem);
+  --step-display: clamp(3.6rem, 0.6rem + 9.6vw, 10.5rem);
 
-  --body-lg: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
-  --body: 0.9375rem;
-  --body-sm: 0.8125rem;
-  --micro: 0.6875rem;
+  /* Space */
+  --gutter: clamp(1rem, 2.6vw, 2.25rem);
+  --shell: 1680px;
+  --measure: 60ch;
+  --nav-h: 64px;
+  --section-y: clamp(5rem, 10vw, 11rem);
 
-  --lh-tight: 1.06;
-  --lh-snug: 1.22;
-  --lh-body: 1.68;
+  /* Motion — Emil Kowalski's strong curves, not the browser defaults */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --t-press: 140ms;
+  --t-hover: 180ms;
+  --t-field: 520ms;
+}
 
-  --track-tight: -0.02em;
-  --track-wide: 0.08em;
-  --track-widest: 0.22em;
+/* ---------- Fields: one flat ground per section ---------- */
+.field {
+  background: var(--bg);
+  color: var(--fg);
+  transition: background-color var(--t-field) var(--ease-out), color var(--t-field) var(--ease-out);
+}
 
-  /* Rhythm */
-  --s1: 0.25rem;
-  --s2: 0.5rem;
-  --s3: 0.75rem;
-  --s4: 1rem;
-  --s5: 1.5rem;
-  --s6: 2rem;
-  --s7: 2.5rem;
-  --s8: 3rem;
-  --s9: 4rem;
-  --s10: 5rem;
-  --s11: 6.5rem;
-  --s12: 8rem;
+.field--bone {
+  --bg: var(--bone);
+  --fg: var(--ink);
+  --muted: #4a463e;
+  --accent: var(--chilli);
+  --surface: var(--bone-2);
+}
 
-  --gutter: clamp(1.25rem, 4vw, 3.5rem);
-  --shell: 1320px;
-  --measure: 62ch;
-  --nav-h: 76px;
-  --section-y: clamp(5rem, 9vw, 9.5rem);
+.field--ink {
+  --bg: var(--ink);
+  --fg: var(--bone);
+  --muted: #b9b5a9;
+  --accent: var(--turmeric);
+  --surface: var(--ink-2);
+}
 
-  /* Motion */
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
-  --t-fast: 220ms;
-  --t: 420ms;
-  --t-slow: 720ms;
+.field--turmeric {
+  --bg: var(--turmeric);
+  --fg: var(--ink);
+  --muted: #2e2610;
+  --accent: var(--ink);
+  --surface: #dc9900;
+}
 
-  --radius: 2px;
-  --radius-lg: 4px;
+.field--chilli {
+  --bg: var(--chilli);
+  --fg: var(--bone);
+  --muted: #ecd6cf;
+  --accent: var(--turmeric);
+  --surface: #912217;
+}
 
-  --z-nav: 100;
-  --z-menu: 120;
+.field--cardamom {
+  --bg: var(--cardamom);
+  --fg: var(--bone);
+  --muted: #bfcac0;
+  --accent: var(--turmeric);
+  --surface: #28493a;
 }
 
 /* ---------- Reset ---------- */
@@ -120,36 +120,39 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
-  scroll-padding-top: var(--nav-h);
+  /* The scrollbar gutter takes its colour from the html element, so it follows
+     whichever field is under the top of the screen instead of staying pale. */
+  background: var(--page-bg, var(--bone));
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--page-thumb, var(--ink)) transparent;
+  transition: background-color var(--t-field) var(--ease-out);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html:not(.lenis) {
+  scroll-padding-top: var(--nav-h);
 }
 
 body {
-  font-family: var(--sans);
-  font-size: var(--body);
+  font-family: var(--font-text);
+  font-size: var(--step-body);
   font-weight: 400;
-  line-height: var(--lh-body);
-  color: var(--text);
-  background: var(--bg);
-  overflow-x: hidden;
-  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  line-height: 1.55;
+  font-kerning: normal;
+  color: var(--ink);
+  background: var(--bone);
+  overflow-x: clip;
 }
 
 img,
-video,
+svg,
 canvas,
-svg {
+video {
   display: block;
   max-width: 100%;
-}
-
-img,
-video {
-  height: auto;
 }
 
 a {
@@ -168,20 +171,76 @@ button {
   background: none;
   border: 0;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
+input {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: inherit;
+  hyphens: none;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* The parts of the browser nobody draws */
 ::selection {
-  background: rgba(201, 163, 78, 0.28);
-  color: var(--text);
+  background: var(--turmeric);
+  color: var(--ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 3px solid var(--fg);
   outline-offset: 3px;
-  border-radius: 1px;
 }
 
-/* ---------- Layout primitives ---------- */
+html[data-field='ink'] {
+  --page-bg: var(--ink);
+  --page-thumb: var(--bone);
+}
+
+html[data-field='turmeric'] {
+  --page-bg: var(--turmeric);
+  --page-thumb: var(--ink);
+}
+
+html[data-field='chilli'] {
+  --page-bg: var(--chilli);
+  --page-thumb: var(--bone);
+}
+
+html[data-field='cardamom'] {
+  --page-bg: var(--cardamom);
+  --page-thumb: var(--bone);
+}
+
+/* Lenis — smooth scroll must not fight native behaviour */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* ---------- Layout ---------- */
 .shell {
   width: 100%;
   max-width: var(--shell);
@@ -194,289 +253,148 @@ button {
   padding-block: var(--section-y);
 }
 
-.section--dark {
-  background: var(--bg-dark);
-  color: var(--text-on-dark);
-}
-
-.section--emerald {
-  background: var(--bg-emerald);
-  color: var(--text-on-dark);
-}
-
-.section--sand {
-  background: var(--bg-sand);
-}
-
-.section--alt {
-  background: var(--bg-alt);
-}
-
-.rule {
-  height: 1px;
-  background: var(--rule);
-  border: 0;
-}
-
-.rule--dark {
-  background: var(--rule-dark);
-}
-
-/* ---------- Typography ---------- */
+/* ---------- Type ---------- */
+/* Display: the lettering of a sack mark. Always upper-case, always tight. */
 .display {
-  font-family: var(--serif);
-  font-weight: 400;
-  line-height: var(--lh-tight);
-  letter-spacing: var(--track-tight);
+  font-family: var(--font-display);
+  font-weight: 850;
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.005em;
+  font-kerning: normal;
   text-wrap: balance;
 }
 
-.eyebrow {
-  font-family: var(--sans);
-  font-size: var(--micro);
-  font-weight: 500;
-  letter-spacing: var(--track-widest);
+.head {
+  font-family: var(--font-display);
+  font-weight: 850;
   text-transform: uppercase;
-  color: var(--brass);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s3);
+  font-size: var(--step-head);
+  line-height: 0.9;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
 }
 
-.eyebrow::before {
-  content: '';
-  width: 28px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.55;
-  flex: none;
+.lead {
+  font-size: var(--step-lead);
+  line-height: 1.34;
+  font-weight: 400;
+  max-width: 38ch;
+  text-wrap: pretty;
 }
 
-.section--dark .eyebrow,
-.section--emerald .eyebrow {
-  color: var(--gold);
+.small {
+  font-size: var(--step-small);
+  line-height: 1.5;
 }
 
-.lede {
-  font-size: var(--body-lg);
-  line-height: var(--lh-body);
-  color: var(--text-2);
-  max-width: var(--measure);
-  font-weight: 300;
-}
-
-.section--dark .lede,
-.section--emerald .lede {
-  color: var(--text-on-dark-2);
+.muted {
+  color: var(--muted);
 }
 
 .tnum {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
 }
 
-/* ---------- Section header ---------- */
-.s-head {
-  max-width: 780px;
+/* Reading column */
+.prose {
+  max-width: var(--measure);
 }
 
-.s-head--center {
-  margin-inline: auto;
-  text-align: center;
+.prose p + p {
+  margin-top: 0.9em;
 }
 
-.s-head--center .lede {
-  margin-inline: auto;
+/* Underlined text link */
+.link {
+  text-decoration: underline;
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-thickness var(--t-hover) var(--ease-out);
 }
 
-.s-head__title {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: var(--display-2);
-  line-height: var(--lh-snug);
-  letter-spacing: var(--track-tight);
-  margin-block: var(--s4) var(--s5);
-  text-wrap: balance;
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    text-decoration-thickness: 0.16em;
+  }
 }
 
 /* ---------- Buttons ---------- */
 .btn {
-  --btn-fg: var(--ivory);
-  --btn-bg: var(--emerald);
+  --btn-bg: var(--fg);
+  --btn-fg: var(--bg);
+  --btn-bg-hover: var(--accent);
+  --btn-fg-hover: var(--bg);
+
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--s3);
-  padding: 0.95rem 1.75rem;
-  font-size: var(--body-sm);
-  font-weight: 500;
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
+  gap: 0.85rem;
+  min-height: 3.5rem;
+  padding: 0.95rem 1.5rem 0.95rem 1.65rem;
+  font-family: var(--font-text);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0;
   color: var(--btn-fg);
   background: var(--btn-bg);
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  overflow: hidden;
-  isolation: isolate;
-  transition: color var(--t) var(--ease), background-color var(--t) var(--ease),
-    border-color var(--t) var(--ease);
+  border-radius: 0;
   white-space: nowrap;
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease,
+    color var(--t-hover) ease;
 }
 
-/* Wipe fill — replaces glow/shadow effects */
-.btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--gold);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform var(--t) var(--ease);
+.btn:active {
+  transform: scale(0.97);
 }
 
-.btn:hover::after,
-.btn:focus-visible::after {
-  transform: scaleY(1);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    background: var(--btn-bg-hover);
+    color: var(--btn-fg-hover);
+  }
+
+  .btn:hover .btn__arrow {
+    transform: translateX(4px);
+  }
 }
 
-.btn:hover,
-.btn:focus-visible {
-  color: var(--forest);
-  border-color: transparent;
+.field--ink .btn {
+  --btn-bg: var(--turmeric);
+  --btn-fg: var(--ink);
+  --btn-bg-hover: var(--bone);
+  --btn-fg-hover: var(--ink);
 }
 
-.btn--ghost {
-  --btn-fg: var(--emerald);
-  --btn-bg: transparent;
-  border-color: var(--rule-strong);
+.field--turmeric .btn {
+  --btn-bg-hover: var(--ink-2);
+  --btn-fg-hover: var(--turmeric);
 }
 
-.btn--ghost:hover,
-.btn--ghost:focus-visible {
-  color: var(--forest);
-}
-
-.btn--onDark {
-  --btn-fg: var(--ivory);
-  --btn-bg: transparent;
-  border-color: var(--rule-dark-strong);
-}
-
-.btn--light {
-  --btn-fg: var(--emerald);
-  --btn-bg: var(--ivory);
+.field--chilli .btn,
+.field--cardamom .btn {
+  --btn-bg: var(--turmeric);
+  --btn-fg: var(--ink);
+  --btn-bg-hover: var(--bone);
+  --btn-fg-hover: var(--ink);
 }
 
 .btn__arrow {
-  width: 14px;
-  height: 14px;
+  width: 1.1em;
+  height: 1.1em;
   flex: none;
-  transition: transform var(--t) var(--ease);
+  transition: transform var(--t-hover) var(--ease-out);
 }
 
-.btn:hover .btn__arrow {
-  transform: translateX(3px);
-}
-
-/* Text link with underline draw */
-.link-quiet {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s2);
-  font-size: var(--body-sm);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  color: inherit;
-  padding-block: 2px;
-}
-
-.link-quiet::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--t) var(--ease);
-}
-
-.link-quiet:hover::after,
-.link-quiet:focus-visible::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
-/* ---------- Editorial numerals ---------- */
-.index-num {
-  font-family: var(--serif);
-  font-size: var(--body-sm);
-  letter-spacing: var(--track-wide);
-  color: var(--brass);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- Reveal primitives ---------- */
-.reveal-mask {
-  display: block;
-  overflow: hidden;
-}
-
-.reveal-mask > * {
-  display: block;
-  will-change: transform;
-}
-
-/* ---------- Notes / disclaimers ---------- */
-.note {
-  border-left: 2px solid var(--gold);
-  padding: var(--s4) var(--s5);
-  background: rgba(201, 163, 78, 0.06);
-}
-
-.note__label {
-  font-size: var(--micro);
+/* ---------- Brand marks ---------- */
+.arabic-mark {
+  font-family: var(--font-arabic);
   font-weight: 600;
-  letter-spacing: var(--track-widest);
-  text-transform: uppercase;
-  color: var(--brass);
-  margin-bottom: var(--s2);
-}
-
-.note__text {
-  font-size: var(--body-sm);
-  line-height: 1.62;
-  color: var(--text-2);
-}
-
-.section--dark .note,
-.section--emerald .note {
-  background: rgba(201, 163, 78, 0.07);
-}
-
-.section--dark .note__text,
-.section--emerald .note__text {
-  color: var(--text-on-dark-2);
-}
-
-.section--dark .note__label,
-.section--emerald .note__label {
-  color: var(--gold);
-}
-
-/* ---------- Islamic geometry: subtle, structural ---------- */
-.geo-field {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23C9A34E' stroke-width='0.7'%3E%3Cpath d='M60 0 120 60 60 120 0 60Z'/%3E%3Cpath d='M60 20 100 60 60 100 20 60Z'/%3E%3Cpath d='M0 0 120 120M120 0 0 120'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 120px 120px;
+  line-height: 1;
+  direction: rtl;
 }
 
 /* ---------- Accessibility ---------- */
@@ -493,22 +411,23 @@ button {
 }
 
 .skip-link {
-  position: absolute;
-  top: -100px;
-  left: var(--s4);
-  z-index: 200;
-  background: var(--emerald);
-  color: var(--ivory);
-  padding: var(--s3) var(--s5);
-  font-size: var(--body-sm);
-  transition: top var(--t-fast) var(--ease);
+  position: fixed;
+  top: -4rem;
+  left: var(--gutter);
+  z-index: 300;
+  padding: 0.85rem 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--turmeric);
+  transition: top var(--t-hover) var(--ease-out);
 }
 
 .skip-link:focus {
-  top: var(--s4);
+  top: var(--gutter);
 }
 
 /* ---------- Reduced motion ---------- */
+/* Fewer and gentler, not none: colour and opacity changes stay, travel goes. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -519,7 +438,6 @@ button {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
@@ -528,12 +446,17 @@ button {
   isolation: isolate;
 }
 
-/* ---------- Magnetic wrapper ---------- */
-.magnetic {
-  display: inline-block;
-  will-change: transform;
+/* ---------- 3D stage slot ---------- */
+.stage {
+  position: relative;
 }
 
-.magnetic > .btn {
-  display: inline-flex;
+.stage__canvas,
+.stage__lost {
+  position: absolute;
+  inset: 0;
+}
+
+.stage__lost {
+  background: var(--bg);
 }

@@ -1,0 +1,76 @@
+/* ---------- Reel ---------- */
+.reel {
+  --reel-h: 1.04em;
+  display: inline-flex;
+  height: var(--reel-h);
+  line-height: 1;
+  overflow: hidden;
+  vertical-align: bottom;
+  font-variant-numeric: tabular-nums;
+}
+
+.reel__digit {
+  display: block;
+  width: 0.5em;
+  height: var(--reel-h);
+  overflow: hidden;
+  text-align: center;
+}
+
+.reel__stack {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--d) * var(--reel-h) * -1));
+  transition: transform 640ms var(--ease-out);
+}
+
+.reel__stack > span {
+  display: block;
+  height: var(--reel-h);
+  line-height: var(--reel-h);
+}
+
+.reel__sep {
+  display: block;
+  height: var(--reel-h);
+  line-height: var(--reel-h);
+  padding-inline: 0.02em;
+}
+
+/* ---------- Stamp ---------- */
+.stamp {
+  color: var(--chilli);
+  overflow: visible;
+}
+
+.stamp__ring,
+.stamp__line {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+/* ---------- Wordmark ---------- */
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: 1.4rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.wordmark__mark {
+  width: 1.7em;
+  height: 1.7em;
+  flex: none;
+}
+
+@media (max-width: 380px) {
+  .wordmark__rest {
+    display: none;
+  }
+}

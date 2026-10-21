@@ -1,217 +1,126 @@
-/* ============================================================
-   02 · Process — the commodity table
-   ============================================================ */
-
-.process {
-  position: relative;
-  /* Tall enough to give the camera a full run along the desk. */
-  height: 460svh;
-  background: var(--forest);
-  color: var(--text-on-dark);
-}
-
-.process__sticky {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.process__stage {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.process__stage-fallback {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(160deg, #0B2A1E 0%, var(--forest) 100%);
-}
-
-/*
-  Keeps type legible over the timber without washing the scene out. The
-  left-hand scrim is the one that matters: the desk is brightest exactly
-  where the stage heading and its description sit.
-*/
-.process__veil {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    linear-gradient(
-      100deg,
-      rgba(3, 31, 23, 0.94) 0%,
-      rgba(3, 31, 23, 0.82) 26%,
-      rgba(3, 31, 23, 0.28) 52%,
-      rgba(3, 31, 23, 0) 72%
-    ),
-    linear-gradient(180deg, rgba(3, 31, 23, 0.9) 0%, rgba(3, 31, 23, 0.1) 28%),
-    linear-gradient(0deg, rgba(3, 31, 23, 0.94) 0%, rgba(3, 31, 23, 0) 40%);
-  pointer-events: none;
-}
-
-.process__content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding-block: calc(var(--nav-h) + var(--s6)) var(--s8);
-}
-
 .process__head {
-  max-width: 40rem;
-}
-
-.process__title {
-  font-family: var(--serif);
-  font-size: var(--display-2);
-  font-weight: 300;
-  line-height: 1.12;
-  letter-spacing: var(--track-tight);
-  color: var(--ivory);
-  margin-top: var(--s4);
-}
-
-/* ---------- Current station ---------- */
-.process__current {
-  margin-top: auto;
-  margin-bottom: var(--s8);
-  max-width: 34rem;
-}
-
-.process__current-index {
-  display: block;
-  color: var(--gold);
-  margin-bottom: var(--s3);
-}
-
-.process__current-label {
-  font-family: var(--serif);
-  font-size: var(--display-3);
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  color: var(--champagne);
-  margin-bottom: var(--s3);
-}
-
-.process__current-desc {
-  font-size: var(--body-lg);
-  font-weight: 300;
-  line-height: 1.6;
-  color: var(--text-on-dark-2);
-}
-
-/* ---------- Station track ---------- */
-.process__track {
-  position: relative;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: var(--s4);
-  padding-top: var(--s5);
-  border-top: 1px solid var(--rule-dark);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 5rem);
+  align-items: end;
+  margin-bottom: clamp(3rem, 7vw, 6rem);
 }
 
-.process__track-fill {
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: var(--gold);
-  transform-origin: left;
-  transition: transform var(--t-slow) var(--ease);
+.process__head .head {
+  max-width: 11ch;
 }
 
-.process__station {
+.process__head .lead {
+  max-width: 32ch;
+  padding-bottom: 0.4rem;
+}
+
+.process__body {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2rem, 5vw, 6rem);
+  align-items: start;
+}
+
+/* The slip: rows told apart by tone alone. */
+.process__slip {
   display: flex;
+  flex-direction: column;
+}
+
+.process__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--s3);
-  font-size: var(--micro);
-  letter-spacing: var(--track-widest);
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1.25rem, 3vw, 2.5rem);
+  background: var(--paper);
+  transition: background-color var(--t-hover) ease;
+}
+
+.process__row:nth-child(even) {
+  background: var(--surface);
+}
+
+.process__row[data-active='true'] {
+  background: var(--turmeric);
+}
+
+.process__label {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 3.6rem);
+  line-height: 0.95;
   text-transform: uppercase;
-  color: var(--text-on-dark-3);
-  transition: color var(--t) var(--ease);
 }
 
-.process__station.is-passed {
-  color: var(--text-on-dark-2);
+.process__what p {
+  margin-top: 0.6rem;
+  max-width: 42ch;
 }
 
-.process__station.is-active {
-  color: var(--gold);
+.process__stamp {
+  display: grid;
+  place-items: center;
+  min-width: 7.2rem;
+  padding: 0.5rem 0.9rem 0.55rem;
+  border: 3px solid var(--chilli);
+  color: var(--chilli);
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: 1.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+  transform: rotate(var(--tilt));
+  user-select: none;
 }
 
-.process__station-dot {
-  width: 5px;
-  height: 5px;
-  flex: none;
-  border: 1px solid currentColor;
-  transform: rotate(45deg);
-  transition: background-color var(--t) var(--ease), transform var(--t) var(--ease);
+.process__row[data-active='true'] .process__stamp {
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
-.process__station.is-active .process__station-dot {
-  background: var(--gold);
-  transform: rotate(45deg) scale(1.35);
+/* The stage being stamped, named across the right. */
+.process__word {
+  position: sticky;
+  top: calc(var(--nav-h) + 22vh);
+  overflow: clip;
+  padding-block: 0.1em;
 }
 
-.process__station.is-passed .process__station-dot {
-  background: currentColor;
+.process__word-text {
+  display: block;
+  font-size: clamp(3rem, 8.1vw, 9rem);
+  white-space: nowrap;
+  animation: word-in 520ms var(--ease-out) both;
 }
 
-/* ---------- Tablet ---------- */
-@media (max-width: 1023px) {
-  .process {
-    height: 380svh;
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+}
+
+@media (max-width: 899px) {
+  .process__head,
+  .process__body {
+    grid-template-columns: 1fr;
   }
 
-  .process__station-label {
+  .process__word {
     display: none;
   }
 
-  .process__track {
-    gap: var(--s2);
+  .process__stamp {
+    min-width: 0;
+    font-size: 1.15rem;
   }
 }
 
-/* ---------- Mobile: vertical timeline ---------- */
-.process-list {
-  background: var(--forest);
-}
-
-.process-list__items {
-  margin-top: var(--s7);
-  border-top: 1px solid var(--rule-dark);
-}
-
-.process-list__item {
-  display: grid;
-  grid-template-columns: 2.5rem 1fr;
-  gap: var(--s3);
-  padding-block: var(--s5);
-  border-bottom: 1px solid var(--rule-dark);
-}
-
-.process-list__item .index-num {
-  color: var(--gold);
-  padding-top: 0.2rem;
-}
-
-.process-list__label {
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--champagne);
-  margin-bottom: var(--s2);
-}
-
-.process-list__desc {
-  font-size: var(--body);
-  line-height: 1.6;
-  color: var(--text-on-dark-2);
+@media (max-width: 520px) {
+  .process__row {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
 }

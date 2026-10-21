@@ -1,172 +1,106 @@
 // ============================================================
-// 04 · Profit model — how profit is calculated.
+// ProfitModel — profit as arithmetic, printed the way a shop prints it.
 //
-// A worked example, labelled as one. No live counter, no rate, no
-// monthly figure: the point is the method, and the method is
-// subtraction.
+// The worked example runs down an adding-machine tape: each line is
+// "printed" in turn, then the result is split by the agreed ratio. The
+// figures are the same lot as the records further down the page, and
+// they are labelled as an illustration, not as a promise.
 // ============================================================
 
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, type CSSProperties } from 'react';
+import { useInView } from '../../hooks';
 import { PROFIT, PROFIT_LINES, PROFIT_SPLIT, formatINR } from '../../content';
-import { useInView, useReducedMotion } from '../../hooks';
-import { VIEWPORT, countUp, maskUp, riseIn, stagger } from '../../utils/motion';
+import { revealLines } from '../../utils/motion';
 import './ProfitModel.css';
 
 export default function ProfitModel() {
-  const reducedMotion = useReducedMotion();
-  const flowRef = useRef<HTMLDivElement>(null);
-  const amountRefs = useRef<Map<string, HTMLSpanElement>>(new Map());
-  const [splitRef, splitInView] = useInView<HTMLDivElement>({ threshold: 0.35 });
+  const [tapeRef, inView] = useInView<HTMLDivElement>({ threshold: 0.25 });
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
-  // Each figure counts up once, as its own line arrives.
   useEffect(() => {
-    const flow = flowRef.current;
-    if (!flow) return;
-
-    if (reducedMotion) {
-      PROFIT_LINES.forEach((line) => {
-        const el = amountRefs.current.get(line.id);
-        if (el) el.textContent = formatINR(line.amount);
-      });
-      return;
-    }
-
-    const disposers = PROFIT_LINES.map((line) => {
-      const el = amountRefs.current.get(line.id);
-      if (!el) return () => {};
-      return countUp(el, line.amount, { trigger: flow, format: formatINR });
-    });
-
-    return () => disposers.forEach((dispose) => dispose());
-  }, [reducedMotion]);
-
-  const registerAmount = (id: string) => (el: HTMLSpanElement | null) => {
-    if (el) amountRefs.current.set(id, el);
-    else amountRefs.current.delete(id);
-  };
+    if (!titleRef.current) return;
+    return revealLines(titleRef.current);
+  }, []);
 
   return (
-    <section className="section section--sand profit" id="profit" aria-labelledby="profit-title">
-      <div className="shell">
-        <motion.div
-          className="s-head"
-          variants={stagger(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
-        >
-          <motion.p className="eyebrow" variants={riseIn}>
-            {PROFIT.eyebrow}
-          </motion.p>
-          <h2 className="s-head__title" id="profit-title">
-            <span className="reveal-mask">
-              <motion.span variants={maskUp}>{PROFIT.title}</motion.span>
-            </span>
-          </h2>
-          <motion.p className="lede" variants={riseIn}>
-            {PROFIT.lede}
-          </motion.p>
-        </motion.div>
+    <section
+      className="profit section field field--bone"
+      id="profit"
+      data-nav="bone"
+      aria-labelledby="profit-title"
+    >
+      <header className="shell profit__head">
+        <h2 className="head" id="profit-title" ref={titleRef}>
+          {PROFIT.title}
+        </h2>
+        <p className="lead">{PROFIT.lede}</p>
+      </header>
 
-        <div className="profit__grid">
-          {/* ---- The calculation ---- */}
-          <div className="profit__flow" ref={flowRef}>
-            <table className="profit__table">
-              <caption className="sr-only">
-                Illustrative calculation of net business profit
-              </caption>
-              <tbody>
-                {PROFIT_LINES.map((line) => (
-                  <motion.tr
-                    key={line.id}
-                    className={`profit__row profit__row--${line.kind}`}
-                    initial={reducedMotion ? undefined : { opacity: 0, y: 16 }}
-                    whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-                    viewport={VIEWPORT}
-                    transition={{ duration: 0.55 }}
-                  >
-                    <th scope="row" className="profit__cell-label">
-                      {line.operator && (
-                        <span className="profit__operator">{line.operator}</span>
-                      )}
-                      <span className="profit__label">{line.label}</span>
-                      <span className="profit__hint">{line.hint}</span>
-                    </th>
-                    <td className="profit__cell-amount tnum">
-                      <span ref={registerAmount(line.id)}>{formatINR(0)}</span>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* ---- The split ---- */}
-          <div className="profit__split" ref={splitRef}>
-            <h3 className="profit__split-title">Agreed profit allocation</h3>
-            <p className="profit__split-note">
-              On an illustrative net business profit of{' '}
-              <strong>{formatINR(PROFIT_SPLIT.net)}</strong>, at an illustrative agreed
-              ratio of {PROFIT_SPLIT.investorRatio}:{PROFIT_SPLIT.managerRatio}.
-            </p>
-
-            {/* One bar, divided — the ratio is a single quantity being shared. */}
-            <div
-              className="profit__bar"
-              role="img"
-              aria-label={`${PROFIT_SPLIT.investorRatio} percent to the investor, ${PROFIT_SPLIT.managerRatio} percent to the manager`}
-            >
-              {/*
-                The ratio is already the flex basis of each part, so the
-                transform only animates the fill from empty to full. Scaling
-                by the ratio as well would apply it twice.
-              */}
-              <span
-                className="profit__bar-part profit__bar-part--investor"
-                style={{ transform: `scaleX(${splitInView || reducedMotion ? 1 : 0})` }}
-              />
-              <span
-                className="profit__bar-part profit__bar-part--manager"
-                style={{
-                  transform: `scaleX(${splitInView || reducedMotion ? 1 : 0})`,
-                  transitionDelay: '160ms',
-                }}
-              />
-            </div>
-
-            <dl className="profit__shares">
-              <div className="profit__share">
-                <dt>
-                  <span className="profit__swatch profit__swatch--investor" aria-hidden="true" />
-                  {PROFIT_SPLIT.investorLabel}
-                  <span className="profit__ratio tnum">{PROFIT_SPLIT.investorRatio}%</span>
-                </dt>
-                <dd className="tnum">{formatINR(PROFIT_SPLIT.investorShare)}</dd>
-              </div>
-              <div className="profit__share">
-                <dt>
-                  <span className="profit__swatch profit__swatch--manager" aria-hidden="true" />
-                  {PROFIT_SPLIT.managerLabel}
-                  <span className="profit__ratio tnum">{PROFIT_SPLIT.managerRatio}%</span>
-                </dt>
-                <dd className="tnum">{formatINR(PROFIT_SPLIT.managerShare)}</dd>
-              </div>
-            </dl>
-          </div>
+      <div className="shell profit__grid">
+        <div className="profit__tape" ref={tapeRef} data-in={inView}>
+          <table>
+            <caption className="sr-only">Worked example of how net business profit is calculated</caption>
+            <tbody>
+              {PROFIT_LINES.map((line, i) => (
+                <tr
+                  key={line.id}
+                  className={`profit__line profit__line--${line.kind}`}
+                  style={{ '--i': i } as CSSProperties}
+                >
+                  <th scope="row">
+                    {line.operator && <em>{line.operator}</em>}
+                    <span>{line.label}</span>
+                    <small>{line.hint}</small>
+                  </th>
+                  <td className="tnum">
+                    {line.kind === 'debit' ? '− ' : ''}
+                    {formatINR(line.amount)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        <motion.div
-          className="note profit__note"
-          initial={reducedMotion ? undefined : { opacity: 0, y: 14 }}
-          whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={VIEWPORT}
-          transition={{ duration: 0.6 }}
-        >
-          <p className="note__label">{PROFIT.disclaimerLabel}</p>
-          <p className="note__text">{PROFIT.disclaimerBody}</p>
-        </motion.div>
+        <div className="profit__split" data-in={inView}>
+          <h3 className="profit__split-title">Agreed profit allocation</h3>
+          <p className="profit__split-note">
+            On an illustrative net business profit of {formatINR(PROFIT_SPLIT.net)}, at an
+            illustrative agreed ratio of {PROFIT_SPLIT.investorRatio}:{PROFIT_SPLIT.managerRatio}.
+          </p>
+
+          <div className="profit__bar" role="img" aria-label={`${PROFIT_SPLIT.investorRatio} percent to the investor, ${PROFIT_SPLIT.managerRatio} percent to the manager`}>
+            <span
+              className="profit__share profit__share--investor"
+              style={{ flexBasis: `${PROFIT_SPLIT.investorRatio}%` }}
+            >
+              <b className="display">{PROFIT_SPLIT.investorRatio}%</b>
+            </span>
+            <span
+              className="profit__share profit__share--manager"
+              style={{ flexBasis: `${PROFIT_SPLIT.managerRatio}%` }}
+            >
+              <b className="display">{PROFIT_SPLIT.managerRatio}%</b>
+            </span>
+          </div>
+
+          <dl className="profit__who">
+            <div style={{ flexBasis: `${PROFIT_SPLIT.investorRatio}%` }}>
+              <dt>{PROFIT_SPLIT.investorLabel}</dt>
+              <dd className="tnum">{formatINR(PROFIT_SPLIT.investorShare)}</dd>
+            </div>
+            <div style={{ flexBasis: `${PROFIT_SPLIT.managerRatio}%` }}>
+              <dt>{PROFIT_SPLIT.managerLabel}</dt>
+              <dd className="tnum">{formatINR(PROFIT_SPLIT.managerShare)}</dd>
+            </div>
+          </dl>
+        </div>
       </div>
+
+      <aside className="shell profit__note">
+        <p className="profit__note-title">{PROFIT.disclaimerLabel}</p>
+        <p>{PROFIT.disclaimerBody}</p>
+      </aside>
     </section>
   );
 }

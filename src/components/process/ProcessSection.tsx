@@ -1,188 +1,101 @@
 // ============================================================
-// 02 · The commodity table — from purchase to settlement.
+// ProcessSection — one consignment, six stamps.
 //
-// The section is tall; a sticky viewport holds the desk while
-// ScrollTrigger scrubs the camera along it and lights each station
-// as it arrives. Mobile gets a vertical timeline instead: the
-// horizontal travel has nowhere to go on a narrow screen.
+// The slip runs down the left. As each line reaches the middle of the
+// screen it is stamped the way a clerk would stamp it: from above, hard,
+// slightly crooked. The stage that is currently being stamped is named,
+// very large, on the right.
 // ============================================================
 
-import { Suspense, lazy, useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import Stage from '../../three/Stage';
-import { useDeviceTier, useIsMobile, useReducedMotion } from '../../hooks';
+import { useRef, useState, type CSSProperties } from 'react';
+import { useGSAP } from '@gsap/react';
 import { PROCESS, PROCESS_STAGES } from '../../content';
-import { VIEWPORT, gsap, maskUp, riseIn, stagger } from '../../utils/motion';
+import { EASE_OUT, gsap, prefersReducedMotion, revealLines, ScrollTrigger } from '../../utils/motion';
 import './ProcessSection.css';
 
-const CommodityDeskScene = lazy(() => import('../../three/scenes/CommodityDeskScene'));
+/** A clerk's stamps never land square. */
+const TILT = [-4, 3, -2.5, 4.5, -3, 2.5];
 
 export default function ProcessSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const progressRef = useRef(0);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const [active, setActive] = useState(0);
-  const isMobile = useIsMobile();
-  const reducedMotion = useReducedMotion();
-  const tier = useDeviceTier();
 
-  // Scrub the camera and the active station from scroll position.
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || isMobile) return;
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) return;
+      const undo = titleRef.current ? revealLines(titleRef.current) : undefined;
 
-    const trigger = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,
-        onUpdate: (self) => {
-          progressRef.current = self.progress;
-          const index = Math.min(
-            PROCESS_STAGES.length - 1,
-            Math.floor(self.progress * PROCESS_STAGES.length)
-          );
-          setActive((prev) => (prev === index ? prev : index));
-        },
-      },
-    });
+      gsap.utils.toArray<HTMLElement>('.process__row').forEach((row, i) => {
+        ScrollTrigger.create({
+          trigger: row,
+          start: 'top 58%',
+          end: 'bottom 42%',
+          onToggle: (self) => {
+            if (self.isActive) setActive(i);
+          },
+        });
 
-    return () => {
-      trigger.scrollTrigger?.kill();
-      trigger.kill();
-    };
-  }, [isMobile]);
+        const stamp = row.querySelector<HTMLElement>('.process__stamp');
+        if (!stamp) return;
+        const rest = TILT[i % TILT.length];
 
-  if (isMobile) {
-    return <ProcessTimeline />;
-  }
+        gsap
+          .timeline({ scrollTrigger: { trigger: row, start: 'top 66%', once: true } })
+          .fromTo(
+            stamp,
+            { scale: 1.55, opacity: 0, rotate: rest - 16 },
+            { scale: 1, opacity: 1, rotate: rest, duration: 0.2, ease: 'power2.in' }
+          )
+          .to(stamp, { scale: 0.94, duration: 0.06, ease: 'power1.out' })
+          .to(stamp, { scale: 1, duration: 0.28, ease: EASE_OUT });
+      });
 
-  const current = PROCESS_STAGES[active];
+      return undo;
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section
-      className="section--dark process"
+      className="process section field field--bone"
       id="process"
+      data-nav="bone"
       ref={sectionRef}
       aria-labelledby="process-title"
     >
-      <div className="process__sticky">
-        <Stage
-          className="process__stage"
-          label="A long trading desk: sacking, brass weights, crates, spice, an open ledger and bullion"
-          camera={{ position: [-6.85, 1.32, 2.55], fov: 40, near: 0.1, far: 60 }}
-          fallback={<div className="process__stage-fallback" />}
-        >
-          <Suspense fallback={null}>
-            <CommodityDeskScene
-              progressRef={progressRef}
-              tier={tier}
-              reducedMotion={reducedMotion}
-            />
-          </Suspense>
-        </Stage>
+      <header className="shell process__head">
+        <h2 className="head" id="process-title" ref={titleRef}>
+          {PROCESS.title}
+        </h2>
+        <p className="lead">{PROCESS.lede}</p>
+      </header>
 
-        <div className="process__veil" aria-hidden="true" />
-
-        <div className="process__content shell">
-          <motion.header
-            className="process__head"
-            variants={stagger(0.1)}
-            initial="hidden"
-            whileInView="show"
-            viewport={VIEWPORT}
-          >
-            <motion.p className="eyebrow" variants={riseIn}>
-              {PROCESS.eyebrow}
-            </motion.p>
-            <h2 className="process__title" id="process-title">
-              <span className="reveal-mask">
-                <motion.span variants={maskUp}>{PROCESS.title}</motion.span>
-              </span>
-            </h2>
-          </motion.header>
-
-          {/* The station currently in front of the camera. */}
-          <div className="process__current" aria-live="polite">
-            <span className="index-num process__current-index">{current.index}</span>
-            <h3 className="process__current-label">{current.label}</h3>
-            <p className="process__current-desc">{current.description}</p>
-          </div>
-
-          {/* The full run, with progress drawn along it. */}
-          <ol className="process__track">
-            <span
-              className="process__track-fill"
-              style={{
-                transform: `scaleX(${(active + 1) / PROCESS_STAGES.length})`,
-              }}
-              aria-hidden="true"
-            />
-            {PROCESS_STAGES.map((stage, i) => (
-              <li
-                key={stage.id}
-                className={`process__station ${i === active ? 'is-active' : ''} ${
-                  i < active ? 'is-passed' : ''
-                }`}
-              >
-                <span className="process__station-dot" aria-hidden="true" />
-                <span className="process__station-label">{stage.label}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Mobile: the same six stages, read top to bottom. */
-function ProcessTimeline() {
-  return (
-    <section
-      className="section section--dark process-list"
-      id="process"
-      aria-labelledby="process-title-m"
-    >
-      <div className="shell">
-        <motion.div
-          className="s-head"
-          variants={stagger(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
-        >
-          <motion.p className="eyebrow" variants={riseIn}>
-            {PROCESS.eyebrow}
-          </motion.p>
-          <h2 className="s-head__title" id="process-title-m">
-            <span className="reveal-mask">
-              <motion.span variants={maskUp}>{PROCESS.title}</motion.span>
-            </span>
-          </h2>
-          <motion.p className="lede" variants={riseIn}>
-            {PROCESS.lede}
-          </motion.p>
-        </motion.div>
-
-        <ol className="process-list__items">
+      <div className="shell process__body">
+        <ol className="process__slip">
           {PROCESS_STAGES.map((stage, i) => (
-            <motion.li
+            <li
               key={stage.id}
-              className="process-list__item"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={VIEWPORT}
-              transition={{ duration: 0.6, delay: i * 0.05 }}
+              className="process__row"
+              data-active={i === active}
+              style={{ '--tilt': `${TILT[i % TILT.length]}deg` } as CSSProperties}
             >
-              <span className="index-num">{stage.index}</span>
-              <div>
-                <h3 className="process-list__label">{stage.label}</h3>
-                <p className="process-list__desc">{stage.description}</p>
+              <div className="process__what">
+                <h3 className="process__label">{stage.label}</h3>
+                <p>{stage.description}</p>
               </div>
-            </motion.li>
+              <span className="process__stamp" aria-label={`Stamped: ${stage.stamp}`}>
+                {stage.stamp}
+              </span>
+            </li>
           ))}
         </ol>
+
+        <div className="process__word" aria-hidden="true">
+          <span className="display process__word-text" key={active}>
+            {PROCESS_STAGES[active].label}
+          </span>
+        </div>
       </div>
     </section>
   );

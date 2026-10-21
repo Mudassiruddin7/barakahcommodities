@@ -1,244 +1,178 @@
-/* ============================================================
-   05 · Transparency
-   ============================================================ */
-
-.transparency {
-  background: var(--bg-alt);
+.records__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 5rem);
+  align-items: end;
+  margin-bottom: clamp(3rem, 7vw, 6rem);
 }
 
-/* ---------- 2.5D ledger sheet ---------- */
-.transparency__scene {
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  perspective: 1400px;
-  perspective-origin: 50% 0%;
+.records__head .head {
+  max-width: 12ch;
 }
 
-.transparency__sheet {
-  background: var(--parchment);
-  border: 1px solid var(--rule);
-  /* A sheet laid on a desk, tilting flat as it comes into view. */
-  transform: rotateX(11deg) translateY(18px) scale(0.985);
-  transform-origin: 50% 0%;
-  opacity: 0.85;
-  transition: transform 1.15s var(--ease), opacity 0.8s var(--ease),
-    box-shadow 1.15s var(--ease);
-  box-shadow: 0 22px 44px -32px rgba(22, 24, 20, 0.55);
+.records__head .lead {
+  max-width: 34ch;
+  padding-bottom: 0.4rem;
 }
 
-.transparency__sheet.is-flat {
-  transform: rotateX(0deg) translateY(0) scale(1);
-  opacity: 1;
-  box-shadow: 0 10px 30px -26px rgba(22, 24, 20, 0.4);
+.records__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2.5rem, 6vw, 7rem);
+  align-items: start;
 }
 
-.transparency__sheet-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--s3);
-  padding: var(--s5) clamp(1rem, 3vw, 2rem);
-  border-bottom: 1px solid var(--rule);
+/* ---------- The ledger page ---------- */
+.records__book {
+  position: relative;
+  padding: clamp(1rem, 2.4vw, 2rem);
+  background: var(--paper);
+  color: var(--ink);
 }
 
-.transparency__sheet-title {
-  font-family: var(--serif);
-  font-size: var(--title);
-  color: var(--emerald);
-}
-
-.transparency__tag {
-  font-size: var(--micro);
-  font-weight: 600;
-  letter-spacing: var(--track-widest);
-  text-transform: uppercase;
-  color: var(--brass);
-  padding: 0.3rem 0.7rem;
-  border: 1px solid rgba(201, 163, 78, 0.45);
-  background: rgba(201, 163, 78, 0.08);
-  white-space: nowrap;
-}
-
-/* ---------- Table ---------- */
-.transparency__table-wrap {
-  overflow-x: auto;
-}
-
-.transparency__table {
+.records__table {
   width: 100%;
-  min-width: 34rem;
   border-collapse: collapse;
+  font-size: 0.9375rem;
 }
 
-.transparency__table th {
+.records__table caption {
+  caption-side: top;
+  padding-bottom: 1rem;
+  padding-right: clamp(5rem, 11vw, 9rem);
   text-align: left;
-  font-size: var(--micro);
-  font-weight: 500;
-  letter-spacing: var(--track-widest);
-  text-transform: uppercase;
-  color: var(--text-3);
-  padding: var(--s4) clamp(0.75rem, 2vw, 1.25rem);
-  border-bottom: 1px solid var(--rule);
+  font-size: var(--step-small);
+  line-height: 1.45;
+  color: #4a463e;
 }
 
-.transparency__table th.is-num,
-.transparency__amount {
-  text-align: right;
-}
-
-.transparency__table td {
-  padding: var(--s4) clamp(0.75rem, 2vw, 1.25rem);
-  border-bottom: 1px solid var(--rule);
-  font-size: var(--body);
-  color: var(--text-2);
+.records__table th,
+.records__table td {
+  padding: 0.7rem 0.6rem;
+  text-align: left;
   vertical-align: baseline;
 }
 
-.transparency__table tbody tr:first-child td {
-  padding-top: var(--s5);
+.records__table thead th {
+  font-weight: 600;
+  border-bottom: 3px double var(--ink);
 }
 
-.transparency__date {
-  white-space: nowrap;
-  color: var(--text-3);
-  font-size: var(--body-sm);
+/* Ruled like an accountant's page: pale lines across, red lines down the money. */
+.records__table tbody td {
+  border-bottom: 1px solid rgba(20, 18, 14, 0.18);
 }
 
-.transparency__particulars {
-  color: var(--text);
+.records__table td:nth-child(4),
+.records__table th:nth-child(4) {
+  border-left: 2px solid var(--chilli);
 }
 
-.transparency__ref {
-  font-size: var(--body-sm);
-  color: var(--text-3);
-  white-space: nowrap;
+.records__table td:nth-child(5),
+.records__table th:nth-child(5) {
+  border-left: 1px solid var(--chilli);
+  border-right: 2px solid var(--chilli);
 }
 
-.transparency__amount {
-  white-space: nowrap;
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--text);
+.records__money {
+  text-align: right !important;
 }
 
-.transparency__sign {
-  color: var(--text-3);
-  margin-right: 0.1em;
-}
-
-.transparency__row--credit .transparency__amount {
-  color: var(--emerald);
-}
-
-/* The result line closes the account. */
-.transparency__row--result td {
-  border-top: 1px solid var(--rule-strong);
+.records__row--result td {
+  padding-top: 1rem;
+  font-weight: 700;
+  border-top: 3px double var(--ink);
   border-bottom: 0;
-  padding-top: var(--s5);
-  padding-bottom: var(--s5);
-  background: rgba(6, 59, 42, 0.04);
 }
 
-.transparency__row--result .transparency__particulars {
-  font-weight: 500;
-  color: var(--emerald);
+.records__row {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 360ms var(--ease-out), transform 360ms var(--ease-out);
+  transition-delay: calc(var(--i) * 170ms + 120ms);
 }
 
-.transparency__row--result .transparency__amount {
-  font-size: 1.35rem;
-  color: var(--emerald);
+.records__book[data-in='true'] .records__row {
+  opacity: 1;
+  transform: none;
 }
 
-.transparency__sheet-foot {
-  padding: var(--s4) clamp(1rem, 3vw, 2rem) var(--s5);
-  font-size: var(--body-sm);
-  line-height: 1.6;
-  color: var(--text-3);
-  border-top: 1px solid var(--rule);
+/* The honest label, struck across the page. */
+.records__sample {
+  position: absolute;
+  top: -1.4rem;
+  right: clamp(-0.5rem, -1vw, -1rem);
+  padding: 0.4rem 1rem 0.5rem;
+  border: 4px solid var(--turmeric);
+  background: var(--cardamom);
+  color: var(--turmeric);
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: clamp(1.4rem, 1rem + 1.2vw, 2rem);
+  line-height: 0.95;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(5deg);
+  pointer-events: none;
 }
 
-/* ---------- Record types ---------- */
-.transparency__records {
+/* ---------- Kinds of record ---------- */
+.records__types {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  margin-top: clamp(3rem, 5vw, 4.5rem);
-  background: var(--rule);
-  border: 1px solid var(--rule);
+  gap: clamp(1.4rem, 2.4vw, 2rem);
 }
 
-.transparency__record {
-  background: var(--bg-alt);
-  padding: var(--s6) var(--s5);
-  transition: background-color var(--t) var(--ease);
+.records__types h3 {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: clamp(1.8rem, 1.2rem + 1.6vw, 2.6rem);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
-.transparency__record:hover {
-  background: var(--parchment);
+.records__types p {
+  margin-top: 0.2rem;
 }
 
-.transparency__record-mark {
-  display: block;
-  width: 7px;
-  height: 7px;
-  background: var(--gold);
-  transform: rotate(45deg);
-  margin-bottom: var(--s4);
+.records__closing {
+  margin-top: clamp(4rem, 9vw, 8rem);
+  max-width: 14ch;
 }
 
-.transparency__record-label {
-  font-family: var(--serif);
-  font-size: var(--title);
-  font-weight: 500;
-  color: var(--emerald);
-  margin-bottom: var(--s2);
-}
+@media (max-width: 520px) {
+  /* On a phone the reference column goes; date, particulars and the money stay. */
+  .records__table th:nth-child(3),
+  .records__table td:nth-child(3) {
+    display: none;
+  }
 
-.transparency__record-detail {
-  font-size: var(--body-sm);
-  line-height: 1.6;
-  color: var(--text-2);
-}
+  .records__table {
+    min-width: 0;
+    font-size: 0.8125rem;
+  }
 
-/* ---------- Closing line ---------- */
-.transparency__closing {
-  margin-top: clamp(3rem, 5vw, 4.5rem);
-  font-family: var(--serif);
-  font-size: var(--display-3);
-  font-weight: 300;
-  font-style: italic;
-  line-height: 1.32;
-  letter-spacing: var(--track-tight);
-  color: var(--emerald);
-  max-width: 32rem;
-  text-wrap: balance;
-}
+  .records__table th,
+  .records__table td {
+    padding: 0.55rem 0.35rem;
+  }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 1023px) {
-  .transparency__records {
-    grid-template-columns: repeat(2, 1fr);
+  .records__table td:first-child {
+    white-space: nowrap;
   }
 }
 
-@media (max-width: 767px) {
-  .transparency__scene {
-    perspective: none;
-  }
-
-  .transparency__sheet {
-    transform: none;
-    opacity: 1;
-    margin-inline: calc(var(--gutter) * -1);
-    border-inline: 0;
-  }
-
-  .transparency__records {
+@media (max-width: 899px) {
+  .records__head,
+  .records__grid {
     grid-template-columns: 1fr;
   }
 
-  .transparency__record {
-    padding: var(--s5) var(--s4);
+  .records__book {
+    overflow-x: auto;
+  }
+
+  .records__table {
+    min-width: 30rem;
   }
 }

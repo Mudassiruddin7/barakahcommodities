@@ -1,146 +1,130 @@
 // ============================================================
-// Lighting — a merchant's window, rebuilt as a lighting rig.
+// Lighting — a product-photography softbox rig, rebuilt in code.
 //
-// The gold reads as gold because it has something to reflect:
-// Lightformer panels are baked into a small cube map once
-// (frames={1}), so there is no HDR download and no per-frame cost.
+// Metal looks like metal when it has something bright to reflect and
+// something dark to reflect between the bright things. So the room is
+// near-black, and a handful of very bright panels sit in it: a large
+// overhead, a key in front, two narrow strips that draw the edges of
+// every bar, and a pale card on the floor that bounces the page's own
+// paper colour back up into the undersides.
+//
+// The panels are baked into a cube map once (frames={1}) — no HDR
+// download, no per-frame cost.
 // ============================================================
 
-import { memo } from 'react';
+import { memo, useMemo, useRef, type RefObject } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
+import * as THREE from 'three';
+
+/** A soft vertical falloff for a fill panel: bright above, dark below. */
+let falloff: THREE.CanvasTexture | null = null;
+function verticalFalloff(): THREE.CanvasTexture {
+  if (falloff) return falloff;
+  const c = document.createElement('canvas');
+  c.width = 4;
+  c.height = 128;
+  const ctx = c.getContext('2d')!;
+  const g = ctx.createLinearGradient(0, 0, 0, 128);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.55, '#8a8a8a');
+  g.addColorStop(1, '#111111');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 4, 128);
+  falloff = new THREE.CanvasTexture(c);
+  falloff.colorSpace = THREE.SRGBColorSpace;
+  return falloff;
+}
+import type { DeviceTier } from './gl';
 
 interface LightingProps {
-  /** Low tier skips shadow casting and the secondary rim. */
-  tier?: 'high' | 'medium' | 'low';
-  /** Warm-to-cool balance; the closing scene runs cooler and deeper. */
-  mood?: 'daylight' | 'vault';
+  tier?: DeviceTier;
+  /** Key-light colour temperature. Gold wants it slightly warm. */
+  warm?: boolean;
+  /** Bounce colour from the ground — match the page the scene sits on. */
+  ground?: string;
+  /** World x the key light and its shadow should stay centred on. */
+  followX?: RefObject<number>;
 }
 
-function Lighting({ tier = 'high', mood = 'daylight' }: LightingProps) {
-  const vault = mood === 'vault';
+function Lighting({ tier = 'high', warm = true, ground = '#e6e3da', followX }: LightingProps) {
+  const key = warm ? '#fff1dc' : '#ffffff';
+  const light = useRef<THREE.DirectionalLight>(null);
+  const target = useMemo(() => new THREE.Object3D(), []);
+
+  // A shadow map only covers so much floor. For a scene that travels, the key
+  // light and the point it aims at travel with the camera.
+  useFrame(() => {
+    if (!followX || !light.current) return;
+    const x = followX.current ?? 0;
+    light.current.position.set(x - 4.5, 7.5, 5.5);
+    target.position.set(x, 0, 0);
+  });
 
   return (
     <>
-      {/* Environment: the reflected world. Rendered once, then static. */}
       <Environment resolution={tier === 'low' ? 128 : 256} frames={1}>
-        {/*
-          Overhead panel. Upward-facing polished metal reflects whatever sits
-          directly above it, and with nothing at the zenith the tops of the
-          bullion came out near-black. This is the sky for that reflection.
-        */}
+        {/* A dark, warm room: metal needs dark to reflect between the bright. */}
+        <color attach="background" args={['#1d1a14']} />
+
+        {/* Overhead softbox: the sky for every upward-facing surface. */}
+        <Lightformer form="rect" intensity={1.25} position={[0, 7, 1]} scale={[11, 8, 1]} color={key} />
+
+        {/* Key, front-left and high. */}
+        <Lightformer form="rect" intensity={2.4} position={[-6, 4, 5]} scale={[6.5, 6.5, 1]} color={key} />
+
+        {/* Wide fill behind the camera with a falloff: the front faces of the bars read it as a gradient. */}
         <Lightformer
           form="rect"
-          intensity={vault ? 2.6 : 2.4}
-          position={[0, 6, 0]}
-          rotation={[Math.PI / 2, 0, 0]}
-          scale={[10, 10, 1]}
-          color={vault ? '#EADCBC' : '#FFFAF0'}
+          map={verticalFalloff()}
+          intensity={1.5}
+          position={[0, 0.8, 10]}
+          scale={[18, 5, 1]}
+          color={key}
         />
 
-        {/* Broad window softbox — the dominant reflection in the metal */}
-        <Lightformer
-          form="rect"
-          intensity={vault ? 1.6 : 2.6}
-          position={[2.5, 4, 3]}
-          rotation={[-Math.PI / 3, 0, 0]}
-          scale={[8, 5, 1]}
-          color={vault ? '#F0E2BE' : '#FFF6E4'}
-        />
-        {/* Cool bounce from the opposite wall keeps highlights from going flat */}
-        <Lightformer
-          form="rect"
-          intensity={vault ? 0.5 : 0.9}
-          position={[-4, 2, -3]}
-          rotation={[0, Math.PI / 2.4, 0]}
-          scale={[6, 4, 1]}
-          color="#C8D4D8"
-        />
-        {/* Warm gold card under the horizon — where the ingot picks up its glow */}
-        <Lightformer
-          form="rect"
-          intensity={vault ? 1.4 : 1.0}
-          position={[0, -1.2, 2.5]}
-          rotation={[Math.PI / 2.6, 0, 0]}
-          scale={[6, 2.5, 1]}
-          color="#C9A34E"
-        />
-        {/* Narrow specular strip that draws the ingot's top edge */}
-        <Lightformer
-          form="rect"
-          intensity={vault ? 2.4 : 2.0}
-          position={[-1.5, 3.5, 1]}
-          rotation={[-Math.PI / 2.2, 0, Math.PI / 8]}
-          scale={[0.6, 4, 1]}
-          color="#FFFFFF"
-        />
-        {/* Deep emerald surround — ties the 3D to the brand */}
-        <Lightformer
-          form="ring"
-          intensity={0.5}
-          position={[0, 1, -6]}
-          scale={[10, 10, 1]}
-          color="#0A4E36"
-        />
+        {/* Two strips: the long, hard reflections that make a bar look cast. */}
+        <Lightformer form="rect" intensity={5} position={[7.5, 2.4, 1.5]} scale={[1.3, 8, 1]} color="#ffffff" />
+        <Lightformer form="rect" intensity={3.5} position={[-8, 1.5, -2]} scale={[1, 7, 1]} color="#fff4e6" />
 
-        {/*
-          Metal only reads as metal when there is something dark for it to
-          reflect between the highlights. These two panels give the lower
-          hemisphere a warm, dim bounce instead of the black void that made
-          an earlier version of the bullion look like a flat yellow block.
-        */}
-        <Lightformer
-          form="rect"
-          intensity={0.42}
-          position={[0, -2.5, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={[12, 12, 1]}
-          color="#6B5433"
-        />
+        {/* Rim from behind: what the top faces, seen at a low angle, reflect. */}
+        <Lightformer form="rect" intensity={0.8} position={[2, 3.6, -8]} scale={[16, 4.5, 1]} color={key} />
+
+        {/* Dim fill from the right, so end faces never go to black. */}
+        <Lightformer form="rect" intensity={0.5} position={[9, 1.5, 3]} scale={[5, 5, 1]} color={key} />
+
+        {/* The paper the scene sits on, bounced back up. */}
         <Lightformer
           form="rect"
           intensity={0.9}
-          position={[3.5, 1.2, -2]}
-          rotation={[0, -Math.PI / 2.6, 0]}
-          scale={[5, 4, 1]}
-          color="#F2DFB4"
+          position={[0, -3.4, 2]}
+          rotation={[Math.PI / 2, 0, 0]}
+          scale={[16, 10, 1]}
+          color={ground}
         />
       </Environment>
 
-      {/* Direct lights carry the shadows the environment cannot. */}
-      <ambientLight intensity={vault ? 0.38 : 0.4} color="#FFF4E2" />
-
+      <hemisphereLight args={['#fff7ea', '#b8aa91', 0.62]} />
+      <primitive object={target} />
       <directionalLight
-        position={[4, 7, 4]}
-        intensity={vault ? 2.1 : 2.2}
-        color={vault ? '#F5E7C4' : '#FFF3DE'}
+        ref={light}
+        target={target}
+        position={[-4.5, 7.5, 5.5]}
+        intensity={1.9}
+        color={key}
         castShadow={tier !== 'low'}
-        shadow-mapSize={tier === 'high' ? 1024 : 512}
-        shadow-bias={-0.0008}
-        shadow-normalBias={0.02}
-        shadow-camera-near={0.5}
-        shadow-camera-far={20}
-        shadow-camera-left={-6}
-        shadow-camera-right={6}
-        shadow-camera-top={6}
-        shadow-camera-bottom={-6}
+        shadow-mapSize={tier === 'high' ? [2048, 2048] : [1024, 1024]}
+        shadow-bias={-0.0006}
+        shadow-normalBias={0.025}
+        shadow-radius={6}
+        shadow-camera-near={1}
+        shadow-camera-far={30}
+        shadow-camera-left={-9}
+        shadow-camera-right={9}
+        shadow-camera-top={9}
+        shadow-camera-bottom={-9}
       />
-
-      {tier !== 'low' && (
-        <directionalLight
-          position={[-5, 3, -4]}
-          intensity={0.45}
-          color="#B9C9CE"
-        />
-      )}
-
-      {/* A single close warm source — the lamp on the merchant's desk. */}
-      <pointLight
-        position={[1.6, 2.2, 1.8]}
-        intensity={vault ? 5 : 3}
-        distance={9}
-        decay={2}
-        color="#E8C88A"
-      />
+      {tier !== 'low' && <directionalLight position={[6, 3, -2]} intensity={0.55} color="#e8eef2" />}
     </>
   );
 }

@@ -1,128 +1,135 @@
 // ============================================================
-// 01 · Business — what Barakah Commodities actually trades.
+// BusinessSection — what is traded, one lot at a time.
 //
-// Three panels over one shared 3D display. Hovering or focusing a
-// panel glides the display to that good, which keeps the section
-// reading as a single composition instead of three cards.
+// A tall track with a sticky stage inside it. Scrolling the track slides
+// a camera along a shelf of the three lots, and the same scroll position
+// changes the words and the colour of the whole field, so the page, the
+// copy and the goods are always on the same lot.
 // ============================================================
 
-import { Suspense, lazy, useCallback, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { lazy, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import Stage from '../../three/Stage';
-import {
-  useDeviceTier,
-  usePointerRef,
-  useReducedMotion,
-} from '../../hooks';
+import { LOT_COUNT, lotIndex } from '../../three/lots';
+import { usePointerRef, useReducedMotion, useIsMobile } from '../../hooks';
 import { BUSINESS, COMMODITIES } from '../../content';
-import { EASE, VIEWPORT, maskUp, riseIn, stagger } from '../../utils/motion';
+import { revealLines } from '../../utils/motion';
+import { scrollToY } from '../../utils/scroll';
 import './BusinessSection.css';
 
-const CommodityDisplayScene = lazy(
-  () => import('../../three/scenes/CommodityDisplayScene')
-);
+const LotsScene = lazy(() => import('../../three/scenes/LotsScene'));
+
+/** Each lot gets the field its goods sit best against. */
+const FIELDS = ['cardamom', 'ink', 'chilli'] as const;
 
 export default function BusinessSection() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const progressRef = useRef(0);
+  const [lot, setLot] = useState(0);
   const reducedMotion = useReducedMotion();
-  const tier = useDeviceTier();
-  const pointerRef = usePointerRef(!reducedMotion);
+  const mobile = useIsMobile();
+  const pointerRef = usePointerRef(!reducedMotion && !mobile);
 
-  // The scene reads the active index from a ref, so moving between
-  // panels never re-renders the canvas tree.
-  const activeRef = useRef(0);
-  const [active, setActive] = useState(0);
+  const camera = useMemo(
+    () => ({ position: [0, 3.2, 9.5] as [number, number, number], fov: 30, near: 0.1, far: 120 }),
+    []
+  );
 
-  const select = useCallback((index: number) => {
-    activeRef.current = index;
-    setActive(index);
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    let queued = false;
+
+    const measure = () => {
+      queued = false;
+      const r = el.getBoundingClientRect();
+      const p = Math.min(Math.max(-r.top / Math.max(r.height - window.innerHeight, 1), 0), 1);
+      progressRef.current = p;
+      const next = lotIndex(p);
+      setLot((prev) => (prev === next ? prev : next));
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
-  return (
-    <section className="section business" id="business" aria-labelledby="business-title">
-      <div className="shell">
-        <motion.div
-          className="s-head business__head"
-          variants={stagger(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={VIEWPORT}
-        >
-          <motion.p className="eyebrow" variants={riseIn}>
-            {BUSINESS.eyebrow}
-          </motion.p>
-          <h2 className="s-head__title" id="business-title">
-            <span className="reveal-mask">
-              <motion.span variants={maskUp}>{BUSINESS.title}</motion.span>
-            </span>
-          </h2>
-          <motion.p className="lede" variants={riseIn}>
-            {BUSINESS.lede}
-          </motion.p>
-        </motion.div>
-      </div>
+  useEffect(() => {
+    if (!titleRef.current) return;
+    return revealLines(titleRef.current);
+  }, []);
 
-      {/* One display band, with the three panels reading beneath it. */}
-      <div className="business__composition">
-        <div className="business__display">
+  const jumpTo = (index: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const travel = el.offsetHeight - window.innerHeight;
+    scrollToY(top + travel * ((index + 0.3) / LOT_COUNT));
+  };
+
+  const field = FIELDS[lot];
+
+  return (
+    <section
+      className={`business field field--${field}`}
+      id="business"
+      data-nav={field}
+      aria-labelledby="business-title"
+    >
+      <header className="business__intro shell">
+        <h2 className="head business__title" id="business-title" ref={titleRef}>
+          {BUSINESS.title}
+        </h2>
+        <p className="lead">{BUSINESS.lede}</p>
+      </header>
+
+      <div className="business__track" ref={trackRef}>
+        <div className="business__pin">
           <Stage
             className="business__stage"
-            label="Spices, dry fruits and physical gold displayed on stone plinths"
-            camera={{ position: [-2.35, 1.05, 3.4], fov: 34, near: 0.1, far: 50 }}
-            fallback={<div className="business__stage-fallback" />}
+            label="Three lots on one shelf: a jute sack of turmeric with chillies and a dish of pepper, a dish of almonds with dates and pistachios, and a stepped pyramid of stamped gold bars"
+            camera={camera}
+            fallback={<div className="business__fallback" aria-hidden="true" />}
           >
-            <Suspense fallback={null}>
-              <CommodityDisplayScene
-                activeRef={activeRef}
-                pointerRef={pointerRef}
-                tier={tier}
-                reducedMotion={reducedMotion}
-              />
-            </Suspense>
+            <LotsScene progressRef={progressRef} pointerRef={pointerRef} />
           </Stage>
 
-          {/* Names the good currently in the display, for anyone not hovering. */}
-          <p className="business__display-caption" aria-hidden="true">
-            {COMMODITIES[active].name}
-          </p>
-        </div>
+          <div className="business__copy shell">
+            <div className="business__lots">
+              {COMMODITIES.map((c, i) => (
+                <article
+                  key={c.id}
+                  className="business__lot"
+                  data-active={i === lot}
+                  aria-hidden={i !== lot}
+                >
+                  <h3 className="display business__name">{c.name}</h3>
+                  <p className="business__detail">{c.detail}</p>
+                  <p className="business__note">{c.note}</p>
+                </article>
+              ))}
+            </div>
 
-        <div className="business__panels shell" role="list">
-          {COMMODITIES.map((item, i) => (
-            <motion.article
-              key={item.id}
-              role="listitem"
-              className={`business__panel ${active === i ? 'is-active' : ''}`}
-              onMouseEnter={() => select(i)}
-              onFocus={() => select(i)}
-              tabIndex={0}
-              aria-current={active === i}
-              initial={reducedMotion ? undefined : { opacity: 0, y: 30 }}
-              whileInView={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={VIEWPORT}
-              transition={{ duration: 0.7, ease: EASE, delay: i * 0.1 }}
-            >
-              <span className="index-num business__panel-index">{item.index}</span>
-
-              <h3 className="business__panel-name">{item.name}</h3>
-              <p className="business__panel-summary">{item.summary}</p>
-
-              <div className="business__panel-body">
-                <p className="business__panel-detail">{item.detail}</p>
-                <p className="business__panel-note">{item.note}</p>
-              </div>
-
-              <span className="business__panel-explore link-quiet" aria-hidden="true">
-                Explore
-                <svg viewBox="0 0 16 16" width="13" height="13" fill="none">
-                  <path
-                    d="M2 8h11M9 4l4 4-4 4"
-                    stroke="currentColor"
-                    strokeWidth="1.3"
-                  />
-                </svg>
-              </span>
-            </motion.article>
-          ))}
+            <ul className="business__switch" aria-label="Choose a lot">
+              {COMMODITIES.map((c, i) => (
+                <li key={c.id} style={{ '--i': i } as CSSProperties}>
+                  <button type="button" data-active={i === lot} onClick={() => jumpTo(i)}>
+                    {c.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
